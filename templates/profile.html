@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="My Profile - DebriSense">
+    <title>My Profile - DebriSense</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body class="profile-page">
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('ngo_dashboard') }}" class="navbar-logo" id="navbar-logo">
+                <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+            </a>
+            <div class="navbar-actions">
+                <a href="{{ url_for('ngo_dashboard') }}" class="navbar-btn desktop-btn profile-nav-btn">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('ngo_logout') }}" class="navbar-btn desktop-btn profile-nav-btn logout-btn">Logout</a>
+            </div>
+        </div>
+        <!-- Mobile Dropdown Menu -->
+        <div class="mobile-dropdown" id="mobile-dropdown">
+            <a href="{{ url_for('ngo_dashboard') }}" class="navbar-btn mobile-btn">Dashboard</a>
+            <a href="{{ url_for('ngo_logout') }}" class="navbar-btn mobile-btn logout-btn">Logout</a>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="profile-content">
+        <div class="profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    {% if user.profile_image and user.profile_image != 'default_profile.png' %}
+                        <img src="{{ url_for('static', filename='img/profiles/' + user.profile_image) }}" alt="Profile">
+                    {% else %}
+                        <div class="avatar-placeholder">
+                            {{ user.ngo_name[0].upper() }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="profile-info">
+                    <h1>{{ user.ngo_name }}</h1>
+                    <p class="profile-email">{{ user.email }}</p>
+                    <div class="profile-badges">
+                        {% if user.is_verified %}
+                            <span class="badge verified">✓ Verified NGO</span>
+                        {% else %}
+                            <span class="badge pending">Pending Verification</span>
+                        {% endif %}
+                        <span class="badge member-since">Member since {{ user.created_at.strftime('%B %Y') if user.created_at else 'N/A' }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Profile Form -->
+            <div class="profile-card">
+                <h2>Edit Profile</h2>
+                <form method="POST" action="{{ url_for('update_ngo_profile') }}" enctype="multipart/form-data" class="profile-form">
+                    <div class="form-group">
+                        <label for="profile_image">Profile Image</label>
+                        <div class="image-upload">
+                            <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                            <span class="upload-hint">JPG, PNG or GIF (Max 5MB)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ngo_name">NGO Name</label>
+                        <input type="text" id="ngo_name" name="ngo_name" value="{{ user.ngo_name }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" value="{{ user.email }}" disabled>
+                        <span class="form-hint">Email cannot be changed</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" value="{{ user.phone or '' }}" placeholder="+60 12-345 6789">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" rows="3" placeholder="Your NGO address">{{ user.address or '' }}</textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 21V13H7V21M7 3V8H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+</body>
+</html>
+

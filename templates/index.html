@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="DebriSense - Predictive Debris Risk Monitoring System for Malaysian Rivers">
+    <title>DebriSense - Debris Risk Monitoring Dashboard</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo" id="navbar-logo">
+                <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+            </div>
+            <a href="{{ url_for('be_part_of_us') }}" class="navbar-btn desktop-btn">Be Part of Us</a>
+        </div>
+        <!-- Mobile Dropdown Menu -->
+        <div class="mobile-dropdown" id="mobile-dropdown">
+            <a href="{{ url_for('be_part_of_us') }}" class="navbar-btn mobile-btn">Be Part of Us</a>
+        </div>
+    </nav>
+    
+    <!-- Map Container -->
+    <div id="map"></div>
+    
+    <!-- Right Sidebar for River Details -->
+    <div class="river-sidebar" id="river-sidebar">
+        <div class="sidebar-header">
+            <h2 id="sidebar-river-name">River Details</h2>
+            <button class="close-sidebar-btn" id="close-sidebar-btn">×</button>
+        </div>
+        
+        <div class="sidebar-content" id="sidebar-content">
+            <!-- Loading state -->
+            <div class="sidebar-loading">
+                <div class="spinner"></div>
+                <p>Loading river data...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/public_map.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+</body>
+</html>
+

@@ -1,0 +1,358 @@
+/* Be Part of Us Page Styles */
+
+.be-part-page {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+}
+
+/* Override base body styles for scrolling */
+html:has(.be-part-page),
+body:has(.be-part-page) {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+}
+
+/* Override navbar styles for this page */
+.be-part-page .navbar {
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.be-part-page .navbar-logo {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.back-home-btn {
+    background-color: #000000 !important;
+}
+
+.back-home-btn:hover {
+    background-color: #171717 !important;
+}
+
+/* Main Content */
+.be-part-content {
+    padding-top: 70px;
+    min-height: calc(100vh - 70px);
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 80px 20px;
+    text-align: center;
+    background-image: url('../img/bposHero.png');
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    color: white;
+    position: relative;
+}
+
+/* Desktop view - show bottom part of image */
+@media (min-width: 768px) {
+    .hero-section {
+        background-position: center 80%;
+    }
+}
+
+/* Optional: Add overlay for better text readability */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-description {
+    font-size: 18px;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto 40px;
+    opacity: 0.95;
+}
+
+/* CTA Buttons */
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+}
+
+.btn-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.primary-btn {
+    background-color: white;
+    color: #000000;
+}
+
+.primary-btn:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.secondary-btn {
+    background-color: white;
+    color: #000000;
+}
+
+.secondary-btn:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Benefits Section */
+.benefits-section {
+    padding: 80px 20px;
+    background: white;
+}
+
+.section-title {
+    font-size: 38px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 50px;
+    color: #2c3e50;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.benefit-card {
+    background: white;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e8e8e8;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.benefit-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.benefit-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #2e2c2c 0%, #ffffff 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.benefit-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke: white;
+}
+
+.benefit-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+
+.benefit-description {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #6c757d;
+}
+
+/* How It Works Section */
+.how-it-works-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.steps-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 50px;
+}
+
+.step-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    min-width: 250px;
+    max-width: 320px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.step-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #000000 0%, #262627 100%);
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.step-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #2c3e50;
+}
+
+.step-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #6c757d;
+}
+
+.step-arrow {
+    font-size: 36px;
+    color: #000000;
+    font-weight: 700;
+}
+
+/* Footer */
+.be-part-footer {
+    background: #212223;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.be-part-footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .be-part-content {
+        padding-top: 60px;
+    }
+    
+    .hero-title {
+        font-size: 32px;
+    }
+    
+    .hero-description {
+        font-size: 16px;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .cta-btn {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .section-title {
+        font-size: 28px;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .steps-container {
+        flex-direction: column;
+    }
+    
+    .step-arrow {
+        transform: rotate(90deg);
+        font-size: 28px;
+    }
+    
+    .step-card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-section {
+        padding: 60px 20px;
+    }
+    
+    .benefits-section,
+    .how-it-works-section {
+        padding: 60px 20px;
+    }
+}
+

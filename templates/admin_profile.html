@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admin Profile - DebriSense">
+    <title>Admin Profile - DebriSense</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_pages.css') }}">
+</head>
+<body class="admin-page">
+    <!-- Top Navbar -->
+    <nav class="navbar admin-navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('admin_dashboard') }}" class="navbar-logo">
+                <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+                <span class="admin-badge">ADMIN</span>
+            </a>
+            <div class="navbar-actions">
+                <a href="{{ url_for('admin_dashboard') }}" class="navbar-btn">Dashboard</a>
+                <a href="{{ url_for('admin_logout') }}" class="navbar-btn logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="admin-content">
+        <div class="admin-container">
+            <div class="page-header">
+                <h1>Admin Profile</h1>
+                <p>Manage your admin account settings</p>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="admin-card">
+                <div class="card-header">
+                    <h2>Account Information</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('update_admin_profile') }}" class="admin-form">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" value="{{ admin.email }}" disabled>
+                            <span class="form-hint">Email cannot be changed</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="name">Display Name</label>
+                            <input type="text" id="name" name="name" value="{{ admin.name }}" required>
+                        </div>
+                        
+                        <div class="form-divider">
+                            <span>Change Password</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new_password">New Password</label>
+                            <input type="password" id="new_password" name="new_password" placeholder="Leave blank to keep current password">
+                            <span class="form-hint">Minimum 6 characters</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm New Password</label>
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm new password">
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="admin-card">
+                <div class="card-header">
+                    <h2>Account Statistics</h2>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Account Created</span>
+                            <span class="stat-value">{{ admin.created_at.strftime('%Y-%m-%d') if admin.created_at else 'N/A' }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Last Login</span>
+                            <span class="stat-value">{{ admin.last_login.strftime('%Y-%m-%d %H:%M') if admin.last_login else 'N/A' }}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rivers Added</span>
+                            <span class="stat-value">{{ admin.rivers.count() }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+

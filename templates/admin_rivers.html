@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage Rivers - DebriSense Admin">
+    <title>Manage Rivers - DebriSense Admin</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_pages.css') }}">
+</head>
+<body class="admin-page">
+    <!-- Top Navbar -->
+    <nav class="navbar admin-navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('admin_dashboard') }}" class="navbar-logo">
+                <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+                <span class="admin-badge">ADMIN</span>
+            </a>
+            <div class="navbar-actions">
+                <a href="{{ url_for('admin_dashboard') }}" class="navbar-btn">Dashboard</a>
+                <a href="{{ url_for('admin_logout') }}" class="navbar-btn logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="admin-content">
+        <div class="admin-container">
+            <div class="page-header">
+                <h1>Manage Rivers</h1>
+                <p>View, edit, and manage monitored river locations</p>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="admin-card">
+                <div class="card-header">
+                    <h2>Monitored Rivers ({{ rivers|length }})</h2>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn-primary btn-small">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Add New River
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if rivers %}
+                    <div class="rivers-grid">
+                        {% for river in rivers %}
+                        <div class="river-card" data-river-id="{{ river.id }}">
+                            <div class="river-image">
+                                {% if river.image %}
+                                    <img src="{{ url_for('static', filename='img/rivers/' + river.image) }}" alt="{{ river.name }}">
+                                {% else %}
+                                    <div class="river-placeholder">🌊</div>
+                                {% endif %}
+                            </div>
+                            <div class="river-info">
+                                <h3>{{ river.name }}</h3>
+                                <p class="river-coords">📍 {{ "%.4f"|format(river.latitude) }}, {{ "%.4f"|format(river.longitude) }}</p>
+                                <p class="river-desc">{{ river.info or 'No description' }}</p>
+                                <p class="river-date">Added: {{ river.date_added.strftime('%Y-%m-%d') if river.date_added else 'N/A' }}</p>
+                            </div>
+                            <div class="river-actions">
+                                <button class="action-btn edit-btn" onclick="openEditModal({{ river.id }}, '{{ river.name }}', {{ river.latitude }}, {{ river.longitude }}, '{{ river.info or '' }}')">
+                                    <svg viewBox="0 0 24 24" fill="none"><path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Edit
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteRiver({{ river.id }}, '{{ river.name }}')">
+                                    <svg viewBox="0 0 24 24" fill="none"><path d="M3 6H5H21M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <p>No rivers added yet</p>
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn-primary">Add First River</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Edit River Modal -->
+    <div class="modal" id="edit-river-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit River</h2>
+                <button class="close-modal" onclick="closeEditModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-river-form" enctype="multipart/form-data">
+                    <input type="hidden" id="edit-river-id">
+                    
+                    <div class="form-group">
+                        <label for="edit-river-name">River Name *</label>
+                        <input type="text" id="edit-river-name" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-latitude">Latitude *</label>
+                            <input type="number" id="edit-latitude" step="0.000001" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-longitude">Longitude *</label>
+                            <input type="number" id="edit-longitude" step="0.000001" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-info">Description</label>
+                        <textarea id="edit-info" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-river-image">New Image (optional)</label>
+                        <input type="file" id="edit-river-image" accept="image/*">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+    
+    <script>
+        // Edit Modal Functions
+        function openEditModal(id, name, lat, lng, info) {
+            document.getElementById('edit-river-id').value = id;
+            document.getElementById('edit-river-name').value = name;
+            document.getElementById('edit-latitude').value = lat;
+            document.getElementById('edit-longitude').value = lng;
+            document.getElementById('edit-info').value = info;
+            document.getElementById('edit-river-image').value = '';
+            document.getElementById('edit-river-modal').classList.add('active');
+        }
+        
+        function closeEditModal() {
+            document.getElementById('edit-river-modal').classList.remove('active');
+        }
+        
+        // Form submission
+        document.getElementById('edit-river-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const riverId = document.getElementById('edit-river-id').value;
+            const formData = new FormData();
+            formData.append('river_name', document.getElementById('edit-river-name').value);
+            formData.append('latitude', document.getElementById('edit-latitude').value);
+            formData.append('longitude', document.getElementById('edit-longitude').value);
+            formData.append('info', document.getElementById('edit-info').value);
+            
+            const imageFile = document.getElementById('edit-river-image').files[0];
+            if (imageFile) {
+                formData.append('river_image', imageFile);
+            }
+            
+            try {
+                const response = await fetch(`/api/river/${riverId}/edit`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('River updated successfully!', 'success');
+                    closeEditModal();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error updating river', 'error');
+            }
+        });
+        
+        // Delete river
+        async function deleteRiver(riverId, riverName) {
+            if (!confirm(`Are you sure you want to delete "${riverName}"? This will also delete all DRI readings for this river.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/river/${riverId}/delete`, { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting river', 'error');
+            }
+        }
+        
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            toastMessage.textContent = message;
+            toast.style.background = type === 'success' ? '#28a745' : '#dc3545';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Close modal on outside click
+        document.getElementById('edit-river-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditModal();
+        });
+    </script>
+</body>
+</html>
+

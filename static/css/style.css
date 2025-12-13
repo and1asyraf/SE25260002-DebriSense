@@ -1,0 +1,580 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Top Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 20px;
+    max-width: 100%;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Navbar Button - Capsule Shape */
+.navbar-btn {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-btn:hover {
+    background-color: #1a1a1a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile Dropdown Menu */
+.mobile-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.mobile-dropdown.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobile-btn {
+    display: block;
+    width: 100%;
+}
+
+.desktop-btn {
+    display: block;
+}
+
+/* Full-screen map (adjusted for navbar) */
+#map {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 70px);
+    z-index: 1;
+    transition: width 0.3s ease;
+}
+
+#map.sidebar-open {
+    width: calc(100% - 420px);
+}
+
+/* River Sidebar */
+.river-sidebar {
+    position: fixed;
+    top: 70px;
+    right: -420px;
+    width: 400px;
+    height: calc(100% - 70px);
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+}
+
+.river-sidebar.active {
+    right: 0;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+}
+
+.sidebar-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.close-sidebar-btn {
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #6c757d;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+}
+
+.close-sidebar-btn:hover {
+    color: #2c3e50;
+}
+
+.sidebar-content {
+    padding: 20px;
+}
+
+.sidebar-loading {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 15px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #000000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.sidebar-section:last-child {
+    border-bottom: none;
+}
+
+/* River Image in Sidebar */
+.river-image-section {
+    padding: 0;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.river-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.river-image:hover {
+    transform: scale(1.02);
+}
+
+.sidebar-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 12px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+.info-label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.risk-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: white;
+}
+
+.dri-score {
+    font-size: 48px;
+    font-weight: 700;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.factor-card {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.factor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.factor-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #2c3e50;
+}
+
+.factor-weight {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.factor-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+}
+
+.factor-normalized {
+    font-size: 11px;
+    color: #6c757d;
+}
+
+.debris-estimate {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.debris-estimate h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    opacity: 0.9;
+}
+
+.debris-amount {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.timestamp {
+    text-align: center;
+    font-size: 11px;
+    color: #6c757d;
+    margin-top: 15px;
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* Leaflet controls adjustment */
+.leaflet-control-container .leaflet-top.leaflet-left {
+    top: 10px;
+}
+
+.leaflet-control-zoom {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+    .navbar {
+        height: 60px;
+    }
+    
+    .navbar-container {
+        padding: 0 12px;
+        justify-content: center;
+    }
+    
+    .navbar-logo {
+        cursor: pointer;
+    }
+    
+    .navbar-logo img {
+        height: 40px;
+    }
+    
+    .desktop-btn {
+        display: none;
+    }
+    
+    .navbar-btn {
+        font-size: 13px;
+        padding: 10px 24px;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .mobile-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    
+    #map {
+        top: 60px;
+        height: calc(100% - 60px);
+        width: 100% !important;
+    }
+    
+    .navbar.dropdown-open + #map {
+        top: calc(60px + 70px);
+        height: calc(100% - 60px - 70px);
+    }
+    
+    /* Mobile Sidebar */
+    .river-sidebar {
+        top: 60px;
+        right: -100%;
+        width: 100%;
+        height: calc(100% - 60px);
+    }
+    
+    .river-sidebar.active {
+        right: 0;
+    }
+    
+    /* Make zoom controls larger for touch */
+    .leaflet-control-zoom a {
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        font-size: 20px;
+    }
+}
+
+/* Tablets (landscape phones and portrait tablets, 576px to 991px) */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .navbar {
+        height: 65px;
+    }
+    
+    .navbar-container {
+        padding: 0 16px;
+    }
+    
+    .navbar-logo img {
+        height: 45px;
+    }
+    
+    .navbar-btn {
+        font-size: 13px;
+        padding: 10px 20px;
+    }
+    
+    #map {
+        top: 65px;
+        height: calc(100% - 65px);
+    }
+}
+
+/* iPad specific adjustments */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .navbar-logo img {
+        height: 48px;
+    }
+}
+
+/* Landscape orientation */
+@media (orientation: landscape) and (max-height: 500px) {
+    .navbar {
+        height: 55px;
+    }
+    
+    .navbar-logo img {
+        height: 38px;
+    }
+    
+    .navbar-btn {
+        font-size: 12px;
+        padding: 8px 16px;
+    }
+    
+    #map {
+        top: 55px;
+        height: calc(100% - 55px);
+    }
+}
+
+/* Loading state */
+.map-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2000;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 16px;
+    color: #34495e;
+}
+
+/* Debris Types Styles */
+.land-use-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.land-use-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.land-use-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+}
+
+.debris-types-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.debris-type-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.debris-type-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.debris-icon {
+    font-size: 18px;
+}
+
+.debris-label {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.debris-percentage {
+    font-size: 14px;
+    font-weight: 700;
+    color: #34495e;
+}
+
+.debris-bar-container {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.debris-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.debris-note {
+    font-size: 11px;
+    color: #7f8c8d;
+    margin-top: 12px;
+    font-style: italic;
+}
+

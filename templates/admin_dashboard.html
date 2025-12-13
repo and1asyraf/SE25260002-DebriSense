@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="DebriSense Admin Dashboard - Manage River Monitoring">
+    <title>Admin Dashboard - DebriSense</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo" id="navbar-logo">
+                <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+                <span class="admin-badge">Admin</span>
+            </div>
+            <div class="navbar-actions">
+                <button class="navbar-btn admin-navbar-btn desktop-btn" id="quick-actions-btn">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Quick Actions
+                </button>
+                <button class="navbar-btn admin-navbar-btn desktop-btn" id="add-location-btn">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Add Location
+                </button>
+                <!-- User Profile Dropdown -->
+                <div class="user-dropdown desktop-btn">
+                    <button class="user-btn" id="user-dropdown-btn">
+                        <div class="user-avatar admin-avatar">
+                            <span>{{ current_user.name[0].upper() if current_user.name else 'A' }}</span>
+                        </div>
+                        <span class="user-name">{{ current_user.name }}</span>
+                        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="user-dropdown-menu" id="user-dropdown-menu">
+                        <div class="dropdown-header">
+                            <strong>{{ current_user.email }}</strong>
+                            <span class="admin-role">System Administrator</span>
+                        </div>
+                        <a href="{{ url_for('admin_logout') }}" class="dropdown-item logout">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9M16 17L21 12M21 12L16 7M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Dropdown Menu -->
+        <div class="mobile-dropdown" id="mobile-dropdown">
+            <div class="mobile-user-info">
+                <div class="user-avatar">
+                    <span>{{ current_user.name[0].upper() if current_user.name else 'A' }}</span>
+                </div>
+                <span>{{ current_user.name }}</span>
+            </div>
+            <button class="navbar-btn mobile-btn" id="quick-actions-btn-mobile">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Quick Actions
+            </button>
+            <button class="navbar-btn mobile-btn" id="add-location-btn-mobile">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Add Location
+            </button>
+            <a href="{{ url_for('admin_logout') }}" class="navbar-btn mobile-btn logout-btn">
+                Logout
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Admin Sidebar Panel -->
+    <div class="admin-sidebar" id="admin-sidebar">
+        <div class="sidebar-header">
+            <h3>Quick Actions</h3>
+            <button class="close-sidebar" id="close-sidebar">×</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="action-card">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h4>Monitoring Locations</h4>
+                <p>View and manage all active river monitoring points</p>
+                <a href="{{ url_for('admin_rivers') }}" class="action-btn">Manage Locations</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13M16 3.13C16.8604 3.3503 17.623 3.8507 18.1676 4.55231C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h4>NGO Users</h4>
+                <p>Manage registered NGO accounts</p>
+                <a href="{{ url_for('admin_users') }}" class="action-btn">Manage Users</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">📋</div>
+                <h4>Debris Reports</h4>
+                <p>Review debris sighting reports from NGOs</p>
+                <a href="{{ url_for('admin_reports') }}" class="action-btn">View Reports</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">📍</div>
+                <h4>Location Requests</h4>
+                <p>Review new monitoring location requests</p>
+                <a href="{{ url_for('admin_location_requests') }}" class="action-btn">View Requests</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h4>Admin Profile</h4>
+                <p>Update your admin account settings</p>
+                <a href="{{ url_for('admin_profile') }}" class="action-btn">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Map Container -->
+    <div id="map"></div>
+    
+    <!-- Right Sidebar for River Details -->
+    <div class="river-sidebar" id="river-sidebar">
+        <div class="sidebar-header">
+            <h2 id="sidebar-river-name">River Details</h2>
+            <button class="close-sidebar-btn" id="close-sidebar-btn">×</button>
+        </div>
+        
+        <div class="sidebar-content" id="sidebar-content">
+            <!-- Loading state -->
+            <div class="sidebar-loading">
+                <div class="spinner"></div>
+                <p>Loading river data...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <!-- Add Location Modal -->
+    <div class="modal" id="add-location-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Monitoring Location</h2>
+                <button class="close-modal" id="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-location-form">
+                    <div class="form-group">
+                        <label for="river-name">River Name *</label>
+                        <input type="text" id="river-name" name="river_name" required placeholder="e.g., Sungai Klang">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="latitude">Latitude *</label>
+                            <input type="number" id="latitude" name="latitude" step="0.000001" required placeholder="3.1390">
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitude *</label>
+                            <input type="number" id="longitude" name="longitude" step="0.000001" required placeholder="101.6869">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location-info">Location Information</label>
+                        <textarea id="location-info" name="info" rows="3" placeholder="Additional details about this monitoring location"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="land-use">Land Use Type *</label>
+                        <select id="land-use" name="land_use" required>
+                            <option value="urban">Urban / Residential</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="rural">Rural / Agricultural</option>
+                            <option value="coastal">Coastal / Estuary</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                        <small class="form-hint">This determines the predicted debris type distribution</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="river-image">River Image (Optional)</label>
+                        <input type="file" id="river-image" name="river_image" accept="image/*">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
+                        <button type="submit" class="btn-primary">Add Location</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/public_map.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
+

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="DebriSense NGO Dashboard - River Monitoring for NGOs">
+    <title>NGO Dashboard - DebriSense</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ngo_dashboard.css') }}">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo" id="navbar-logo">
+                <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+                <span class="ngo-badge">NGO</span>
+            </div>
+            <div class="navbar-actions">
+                <!-- NGO Tools Button -->
+                <button class="navbar-btn ngo-navbar-btn desktop-btn" id="ngo-tools-btn">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    NGO Tools
+                </button>
+                
+                <!-- Alerts Button -->
+                <button class="navbar-btn ngo-navbar-btn desktop-btn" id="alerts-btn">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 8A6 6 0 1 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="alert-badge" id="alert-badge" style="display: none;">0</span>
+                </button>
+                
+                <!-- User Profile Dropdown -->
+                <div class="user-dropdown desktop-btn">
+                    <button class="user-btn" id="user-dropdown-btn">
+                        <div class="user-avatar">
+                            {% if current_user.profile_image and current_user.profile_image != 'default_profile.png' %}
+                                <img src="{{ url_for('static', filename='img/profiles/' + current_user.profile_image) }}" alt="Profile">
+                            {% else %}
+                                <span>{{ current_user.ngo_name[0].upper() if current_user.ngo_name else 'N' }}</span>
+                            {% endif %}
+                        </div>
+                        <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="user-dropdown-menu" id="user-dropdown-menu">
+                        <a href="{{ url_for('ngo_profile') }}" class="dropdown-item">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            My Profile
+                        </a>
+                        <a href="{{ url_for('ngo_logout') }}" class="dropdown-item logout">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9M16 17L21 12M21 12L16 7M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Dropdown Menu -->
+        <div class="mobile-dropdown" id="mobile-dropdown">
+            <div class="mobile-user-info">
+                <div class="user-avatar">
+                    {% if current_user.profile_image and current_user.profile_image != 'default_profile.png' %}
+                        <img src="{{ url_for('static', filename='img/profiles/' + current_user.profile_image) }}" alt="Profile">
+                    {% else %}
+                        <span>{{ current_user.ngo_name[0].upper() if current_user.ngo_name else 'N' }}</span>
+                    {% endif %}
+                </div>
+                <span>{{ current_user.ngo_name }}</span>
+            </div>
+            <button class="navbar-btn mobile-btn" id="ngo-tools-btn-mobile">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                NGO Tools
+            </button>
+            <a href="{{ url_for('ngo_profile') }}" class="navbar-btn mobile-btn">
+                My Profile
+            </a>
+            <a href="{{ url_for('ngo_logout') }}" class="navbar-btn mobile-btn logout-btn">
+                Logout
+            </a>
+        </div>
+    </nav>
+    
+    <!-- NGO Tools Sidebar -->
+    <div class="ngo-sidebar" id="ngo-sidebar">
+        <div class="sidebar-header">
+            <h3>🛠️ NGO Tools</h3>
+            <button class="close-sidebar" id="close-ngo-sidebar">×</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <!-- Watchlist Section -->
+            <div class="tool-section">
+                <h4>⭐ My Watchlist</h4>
+                <div id="watchlist-container" class="watchlist-list">
+                    <p class="loading-text">Loading watchlist...</p>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="tool-section">
+                <h4>⚡ Quick Actions</h4>
+                <div class="action-buttons">
+                    <button class="action-btn" id="report-debris-btn">
+                        <span class="action-icon">📋</span>
+                        <span>Report Debris</span>
+                    </button>
+                    <button class="action-btn" id="request-location-btn">
+                        <span class="action-icon">📍</span>
+                        <span>Request Location</span>
+                    </button>
+                    <button class="action-btn" id="my-reports-btn">
+                        <span class="action-icon">📊</span>
+                        <span>My Reports</span>
+                    </button>
+                    <button class="action-btn" id="my-requests-btn">
+                        <span class="action-icon">📝</span>
+                        <span>My Requests</span>
+                    </button>
+                    <button class="action-btn" id="export-data-btn">
+                        <span class="action-icon">📥</span>
+                        <span>Export Data</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Map Container -->
+    <div id="map"></div>
+    
+    <!-- Right Sidebar for River Details -->
+    <div class="river-sidebar" id="river-sidebar">
+        <div class="sidebar-header">
+            <h2 id="sidebar-river-name">River Details</h2>
+            <button class="close-sidebar-btn" id="close-sidebar-btn">×</button>
+        </div>
+        
+        <div class="sidebar-content" id="sidebar-content">
+            <!-- Loading state -->
+            <div class="sidebar-loading">
+                <div class="spinner"></div>
+                <p>Loading river data...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <!-- Report Debris Modal -->
+    <div class="modal" id="report-debris-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Report Debris Sighting</h2>
+                <button class="close-modal" id="close-report-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="report-debris-form">
+                    <div class="form-group">
+                        <label for="report-river">Select River *</label>
+                        <select id="report-river" name="river_id" required>
+                            <option value="">-- Select a river --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="debris-type">Debris Type *</label>
+                        <select id="debris-type" name="debris_type" required>
+                            <option value="plastic">Plastic (bottles, bags, packaging)</option>
+                            <option value="organic">Organic (branches, leaves, dead animals)</option>
+                            <option value="household">Household (furniture, appliances)</option>
+                            <option value="industrial">Industrial (chemicals, construction waste)</option>
+                            <option value="mixed">Mixed / Multiple Types</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="estimated-amount">Estimated Amount *</label>
+                        <select id="estimated-amount" name="estimated_amount" required>
+                            <option value="small">Small (< 10 kg)</option>
+                            <option value="medium">Medium (10-50 kg)</option>
+                            <option value="large">Large (50-200 kg)</option>
+                            <option value="massive">Massive (> 200 kg)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sighting-date">Date of Sighting</label>
+                        <input type="date" id="sighting-date" name="sighting_date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="report-description">Description</label>
+                        <textarea id="report-description" name="description" rows="3" placeholder="Describe what you observed..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="report-photo">Photo (Optional)</label>
+                        <input type="file" id="report-photo" name="photo" accept="image/*">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="cancel-report-btn">Cancel</button>
+                        <button type="submit" class="btn-primary">Submit Report</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Request Location Modal -->
+    <div class="modal" id="request-location-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📍 Request New Monitoring Location</h2>
+                <button class="close-modal" id="close-request-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="request-location-form">
+                    <div class="form-group">
+                        <label for="location-name">Location/River Name *</label>
+                        <input type="text" id="location-name" name="location_name" required placeholder="e.g., Sungai Gombak">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="req-latitude">Latitude *</label>
+                            <input type="number" id="req-latitude" name="latitude" step="0.000001" required placeholder="3.1390">
+                        </div>
+                        <div class="form-group">
+                            <label for="req-longitude">Longitude *</label>
+                            <input type="number" id="req-longitude" name="longitude" step="0.000001" required placeholder="101.6869">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="req-state">State</label>
+                            <input type="text" id="req-state" name="state" placeholder="e.g., Selangor">
+                        </div>
+                        <div class="form-group">
+                            <label for="req-district">District</label>
+                            <input type="text" id="req-district" name="district" placeholder="e.g., Petaling">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="req-land-use">Land Use Type</label>
+                        <select id="req-land-use" name="land_use">
+                            <option value="urban">Urban / Residential</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="rural">Rural / Agricultural</option>
+                            <option value="coastal">Coastal / Estuary</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="request-reason">Reason for Monitoring *</label>
+                        <textarea id="request-reason" name="reason" rows="3" required placeholder="Why should this location be monitored?"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additional-info">Additional Information</label>
+                        <textarea id="additional-info" name="additional_info" rows="2" placeholder="Any other relevant details..."></textarea>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" id="cancel-request-btn">Cancel</button>
+                        <button type="submit" class="btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- My Reports Modal -->
+    <div class="modal" id="my-reports-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📊 My Debris Reports</h2>
+                <button class="close-modal" id="close-my-reports-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="my-reports-container">
+                    <p class="loading-text">Loading your reports...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- My Requests Modal -->
+    <div class="modal" id="my-requests-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📝 My Location Requests</h2>
+                <button class="close-modal" id="close-my-requests-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="my-requests-container">
+                    <p class="loading-text">Loading your requests...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Data Modal -->
+    <div class="modal" id="export-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📥 Export Data</h2>
+                <button class="close-modal" id="close-export-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option">
+                        <h4>Export Watchlist Data</h4>
+                        <p>Download DRI data for all rivers in your watchlist</p>
+                        <div class="export-controls">
+                            <select id="export-days">
+                                <option value="7">Last 7 days</option>
+                                <option value="14">Last 14 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                            </select>
+                            <button class="btn-primary" id="export-watchlist-btn">Download CSV</button>
+                        </div>
+                    </div>
+                    
+                    <div class="export-option">
+                        <h4>Export Single River</h4>
+                        <p>Select a river to export its historical data</p>
+                        <div class="export-controls">
+                            <select id="export-river-select">
+                                <option value="">-- Select a river --</option>
+                            </select>
+                            <button class="btn-primary" id="export-river-btn">Download CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alerts Modal -->
+    <div class="modal" id="alerts-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔔 Notifications</h2>
+                <button class="close-modal" id="close-alerts-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alerts-actions">
+                    <button class="btn-secondary btn-small" id="mark-all-read-btn">Mark All as Read</button>
+                </div>
+                <div id="alerts-container">
+                    <p class="loading-text">Loading notifications...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Historical Data Modal -->
+    <div class="modal" id="history-modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📈 Historical DRI Data</h2>
+                <button class="close-modal" id="close-history-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="chart-container">
+                    <canvas id="dri-chart"></canvas>
+                </div>
+                <div id="history-stats" class="history-stats"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/public_map.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ngo_dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ngo_features.js') }}"></script>
+</body>
+</html>
+

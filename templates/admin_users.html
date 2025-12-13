@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage NGO Users - DebriSense Admin">
+    <title>Manage Users - DebriSense Admin</title>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_pages.css') }}">
+</head>
+<body class="admin-page">
+    <!-- Top Navbar -->
+    <nav class="navbar admin-navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('admin_dashboard') }}" class="navbar-logo">
+                <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+                <span class="admin-badge">ADMIN</span>
+            </a>
+            <div class="navbar-actions">
+                <a href="{{ url_for('admin_dashboard') }}" class="navbar-btn">Dashboard</a>
+                <a href="{{ url_for('admin_logout') }}" class="navbar-btn logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="admin-content">
+        <div class="admin-container">
+            <div class="page-header">
+                <h1>Manage NGO Users</h1>
+                <p>View, edit, and manage registered NGO accounts</p>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="admin-card">
+                <div class="card-header">
+                    <h2>Registered NGOs ({{ users|length }})</h2>
+                </div>
+                <div class="card-body">
+                    {% if users %}
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>NGO Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th>Verified</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr data-user-id="{{ user.id }}">
+                                    <td>{{ user.id }}</td>
+                                    <td>
+                                        <strong>{{ user.ngo_name }}</strong>
+                                    </td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ user.phone or '-' }}</td>
+                                    <td>
+                                        <span class="status-badge {{ 'active' if user.is_active else 'inactive' }}">
+                                            {{ 'Active' if user.is_active else 'Inactive' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge {{ 'verified' if user.is_verified else 'unverified' }}">
+                                            {{ '✓ Verified' if user.is_verified else 'Pending' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else 'N/A' }}</td>
+                                    <td class="actions-cell">
+                                        <button class="action-btn edit-btn" onclick="openEditModal({{ user.id }}, '{{ user.ngo_name }}', '{{ user.phone or '' }}', '{{ user.address or '' }}', {{ 'true' if user.is_active else 'false' }}, {{ 'true' if user.is_verified else 'false' }})">
+                                            <svg viewBox="0 0 24 24" fill="none"><path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </button>
+                                        <button class="action-btn toggle-btn" onclick="toggleUserStatus({{ user.id }})">
+                                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2V6M12 18V22M4.93 4.93L7.76 7.76M16.24 16.24L19.07 19.07M2 12H6M18 12H22M4.93 19.07L7.76 16.24M16.24 7.76L19.07 4.93" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </button>
+                                        <button class="action-btn verify-btn" onclick="toggleUserVerify({{ user.id }})">
+                                            <svg viewBox="0 0 24 24" fill="none"><path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </button>
+                                        <button class="action-btn delete-btn" onclick="deleteUser({{ user.id }}, '{{ user.ngo_name }}')">
+                                            <svg viewBox="0 0 24 24" fill="none"><path d="M3 6H5H21M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13M16 3.13C16.8604 3.3503 17.623 3.8507 18.1676 4.55231C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <p>No NGO users registered yet</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Edit User Modal -->
+    <div class="modal" id="edit-user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit NGO User</h2>
+                <button class="close-modal" onclick="closeEditModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-user-form">
+                    <input type="hidden" id="edit-user-id">
+                    
+                    <div class="form-group">
+                        <label for="edit-ngo-name">NGO Name</label>
+                        <input type="text" id="edit-ngo-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-phone">Phone</label>
+                        <input type="tel" id="edit-phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-address">Address</label>
+                        <textarea id="edit-address" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="edit-is-active">
+                                <span>Active Account</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="edit-is-verified">
+                                <span>Verified NGO</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-new-password">New Password (optional)</label>
+                        <input type="password" id="edit-new-password" placeholder="Leave blank to keep current">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+    
+    <script>
+        // Edit Modal Functions
+        function openEditModal(id, name, phone, address, isActive, isVerified) {
+            document.getElementById('edit-user-id').value = id;
+            document.getElementById('edit-ngo-name').value = name;
+            document.getElementById('edit-phone').value = phone;
+            document.getElementById('edit-address').value = address;
+            document.getElementById('edit-is-active').checked = isActive;
+            document.getElementById('edit-is-verified').checked = isVerified;
+            document.getElementById('edit-new-password').value = '';
+            document.getElementById('edit-user-modal').classList.add('active');
+        }
+        
+        function closeEditModal() {
+            document.getElementById('edit-user-modal').classList.remove('active');
+        }
+        
+        // Form submission
+        document.getElementById('edit-user-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userId = document.getElementById('edit-user-id').value;
+            const data = {
+                ngo_name: document.getElementById('edit-ngo-name').value,
+                phone: document.getElementById('edit-phone').value,
+                address: document.getElementById('edit-address').value,
+                is_active: document.getElementById('edit-is-active').checked,
+                is_verified: document.getElementById('edit-is-verified').checked,
+                new_password: document.getElementById('edit-new-password').value
+            };
+            
+            try {
+                const response = await fetch(`/api/user/${userId}/edit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('User updated successfully!', 'success');
+                    closeEditModal();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error updating user', 'error');
+            }
+        });
+        
+        // Toggle user status
+        async function toggleUserStatus(userId) {
+            try {
+                const response = await fetch(`/api/user/${userId}/toggle-status`, { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error toggling status', 'error');
+            }
+        }
+        
+        // Toggle user verification
+        async function toggleUserVerify(userId) {
+            try {
+                const response = await fetch(`/api/user/${userId}/verify`, { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error toggling verification', 'error');
+            }
+        }
+        
+        // Delete user
+        async function deleteUser(userId, userName) {
+            if (!confirm(`Are you sure you want to delete "${userName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/user/${userId}/delete`, { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast('Error: ' + result.error, 'error');
+                }
+            } catch (error) {
+                showToast('Error deleting user', 'error');
+            }
+        }
+        
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            toastMessage.textContent = message;
+            toast.style.background = type === 'success' ? '#28a745' : '#dc3545';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Close modal on outside click
+        document.getElementById('edit-user-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditModal();
+        });
+    </script>
+</body>
+</html>
+
