@@ -25,27 +25,15 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### Running the Application
+### Running the Application 
 
-```bash
-python app.py
-```
+```bash 
+python app.py 
+``` 
 
-The application will be available at `http://localhost:5000`
-
-## Features
-- Interactive Leaflet.js map showing Malaysian rivers
-- Responsive design (mobile, tablet, desktop)
-- Real-time debris risk monitoring
-- DRI-powered predictions
+The application will be available at : 
 
 ## Technology Stack
 - **Backend:** Python Flask
 - **Frontend:** HTML5, CSS3, JavaScript, Leaflet.js
 - **Maps:** OpenStreetMap via Leaflet
-
-## Rivers Monitored
-- Sungai Klang (Kuala Lumpur)
-- Sungai Pinang (Penang)
-- Sungai Inanam (Sabah)
-
