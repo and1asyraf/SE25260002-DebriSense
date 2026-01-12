@@ -1,0 +1,170 @@
+
+
+School of Computer Sciences
+CAT404 Software Engineering Major Project
+Analysis Report
+SE25260002: DebriSense (AI-Powered Marine Debris Intelligence Dashboard)
+ANDI MUHAMMAD ASYRAF BIN ARIF
+163687
+
+Supervisor: Ts. Dr. Mohd Heikal bin Husin
+Examiner: 
+
+
+Academic Session
+2025/2026
+DECLARATION
+“I declare that the following is my own work and does not contain any unacknowledged work from any other sources. This report was undertaken to fulfill the requirements of the Undergraduate Major Project for the Bachelor of Science in Computer Science (Honors) program at Universiti Sains Malaysia”.
+
+
+Signature	:   ……………………………
+Name		:   Andi Muhammad Asyraf bin Arif
+Date		:   17th November 2025
+
+ABSTRAK
+Kata kunci: 
+
+ABSTRACT
+Keywords: 
+
+
+ACKNOWLEDGEMENTS
+I would like to express my sincere gratitude to Ts. Dr. Mohd Heikal bin Husin for all of his help, encouragement, and constructive criticism while working on this project. His knowledge and support have been crucial in determining the course and outcome of our work. 
+I am also deeply thankful to Dr. Chew Xin Ying for her role as the final year project coordinator, providing essential resources that significantly contributed to the development and execution of this project. 
+I am incredibly grateful to my family for their unwavering support, love, and understanding during this journey. Their steadfast assistance has been the foundation of my strength and perseverance. I wish to also express my gratitude to my friends for their support, empathy, and inspiration, all of which have been crucial in helping me stay balanced and optimistic throughout this project.
+
+TABLE OF CONTENTS
+DECLARATION	ii
+ABSTRAK	iii
+ABSTRACT	iv
+ACKNOWLEDGEMENTS	v
+TABLE OF CONTENTS	vi
+LIST OF TABLES	viii
+LIST OF FIGURES	ix
+LIST OF ABBREVIATIONS AND SYMBOLS	x
+1	INTRODUCTION	1
+1.1.	Background	1
+1.2.	Problem Statements	1
+1.3.	Motivation	1
+1.4.	System Objectives	1
+1.5.	Proposed Solutions	1
+1.6.	Benefits and Uniqueness of the Proposed Solutions	1
+1.7.	Organization of the Report	1
+2	BACKGROUND & RELATED WORK	2
+3	SYSTEM REQUIREMENTS / ANALYSIS	3
+4	SYSTEM DESIGN & IMPLEMENTATION	4
+5	SYSTEM TESTING & EVALUATION	5
+6	SDG ALIGNMENT	Error! Bookmark not defined.
+7	CONCLUSION & FUTURE WORK	Error! Bookmark not defined.
+REFERENCES	8
+APPENDICES	9
+
+LIST OF TABLES
+Table 3.1: Summary of System Analysis and Design Methodologies	
+page #`
+LIST OF FIGURES
+Figure 2.1: An Example System and Its Environment	 page #
+
+LIST OF ABBREVIATIONS AND SYMBOLS
+HTML		- Hypertext Markup Language
+HTTP		- HyperText Transport Protocol
+
+
+INTRODUCTION
+1.1 Background 
+1.1.1 River Debris and Waste Accumulation in Malaysia 
+
+1.2 Problem Statements 
+
+1.3 Motivation
+
+1.4 System Objectives (2-3 Objectives)
+
+
+1.5 Proposed Solutions
+1.5.1 System Architecture (DONE)
+1.5.2 System Decomposition
+
+1.6 Benefits/Impacts/Significance of Project
+
+1.7 Uniqueness of the Proposed Solutions
+
+1.8 Organization of the Report
+
+2 BACKGROUND & RELATED WORK 
+2.1 Status of the Project 
+
+2.2 Background 
+
+2.3 Comparision Analysis of Similar Systems 
+2.3.1 Local Systems 
+2.3.2 International Systems 
+2.4 Introduction of Proposed Work 
+
+
+3 SYSTEM REQUIREMENTS / ANALYSIS 
+3.1 Project Scope 
+3.1.1 Project Deliverables 
+3.1.2 Project Exclusions 
+3.1.3 Project Stakeholders 
+
+3.2 System Capabilities 
+
+3.3 System Limitations  
+
+3.4 Project Management 
+3.4.1 Work Breakdown Structure 
+3.4.2 Gantt Chart 
+3.4.3 Milestone Timeline 
+
+3.5 SWOT Analysis 
+
+3.6 Development Methodology (Agile Methodology)
+3.6.1 Definition and Application of Iterative Model  
+3.6.2 Implementation of Agile Methodology 
+
+3.7 Detailed Requirement of New System 
+
+3.8 Diagrams 
+3.8.1 Use Case Diagram  
+3.8.2 Use Case Description (Table Form)
+3.8.3 Entity Relations Diagram (ERD) 
+3.8.4 System Sequence Diagram (for each module) 
+
+3.9 Detailed Description of Proposed System 
+3.9.1 Functional Requirements (Table Form)
+3.9.2 Non-Functional Requirements (Table Form) 
+3.9.3 Detailed Architecture Diagram of DebriSense 
+3.9.4 Module Integration Diagram 
+3.9.5 Feature Description (Table Form)
+3.9.6 Technique Implementation 
+3.9.7 Product Metrics (Table Form) 
+3.9.8 Project Metrics (Table Form) 
+3.9.9 Process Metrics (Table Form) 
+
+3.10 Technology Deployed 
+3.10.1 Hardware (Table form)
+3.10.2 Software (Table form) 
+
+3.11 Prototype 
+
+
+
+
+
+4.0 SYSTEM DESIGN & IMPLEMENTATION
+
+5.0 SYSTEM TESTING & EVALUATION
+
+6.0 SDG ALIGNMENT
+
+7.0 CONCLUSION & FUTURE WORK
+
+REFERENCES
+The list of references is closely tied to the review of the state of the art given in section 3. Most examiners scan your list of references looking for the important works in the field, so make sure they are listed and referred in the report. 
+All references given must be referred to in the main body of the report. Note the difference from a Bibliography, which may include works that are not directly referenced in the report. Organize the list of references either alphabetically by author surname (preferred), or by order of citation in the report.
+List down all the references from books, journals, proceedings, websites, manual etc. Recommended reference style: APA or Harvard or IEEE.
+
+APPENDICES
+What goes in the appendices? Any material which impedes the smooth development of your presentation, but which is important to justify the results of a report. Generally, it is a material that is of too nitty-gritty a level of detail for inclusion in the main body of the report, but which should be available for perusal by the examiners to convince them sufficiently. Examples include program listings, immense tables of data, lengthy mathematical proofs or derivations, etc.
+Include in the appendices reference materials that are too lengthy for the main report. If the appendix includes tables and figures, label them as Table A.1, Figure A.1, and so on.

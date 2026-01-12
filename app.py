@@ -106,7 +106,7 @@ with app.app_context():
             print("✓ Default admin created: admin@debrisense.my / 123456")
         else:
             print("✓ Admin account exists")
-    except Exception as e:
+    except Exception as e: 
         print(f"Admin creation error: {e}")
         db.session.rollback()
     
@@ -1292,6 +1292,18 @@ def admin_reports():
     """Admin page to review debris reports"""
     reports = DebrisReport.query.order_by(DebrisReport.reported_at.desc()).all()
     return render_template('admin_reports.html', reports=reports, admin=current_user)
+
+@app.route('/admin/hotspot-reports')
+@admin_required
+def admin_hotspot_reports():
+    """Admin page for hotspot reports management"""
+    return render_template('admin_hotspot_reports.html', admin=current_user)
+
+@app.route('/ngo/hotspot-reports')
+@ngo_required
+def ngo_hotspot_reports():
+    """NGO page for viewing hotspot reports"""
+    return render_template('ngo_hotspot_reports.html')
 
 @app.route('/admin/location-requests')
 @admin_required

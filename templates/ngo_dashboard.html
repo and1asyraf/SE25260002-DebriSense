@@ -22,6 +22,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ngo_dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
 </head>
 <body>
     <!-- Top Navbar -->
@@ -133,6 +134,10 @@
                     <button class="action-btn" id="request-location-btn">
                         <span class="action-icon">📍</span>
                         <span>Request Location</span>
+                    </button>
+                    <button class="action-btn" onclick="window.location.href='{{ url_for('ngo_hotspot_reports') }}'">
+                        <span class="action-icon">🗺️</span>
+                        <span>Hotspot Reports</span>
                     </button>
                     <button class="action-btn" id="my-reports-btn">
                         <span class="action-icon">📊</span>
@@ -417,6 +422,7 @@
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ngo_dashboard.js') }}"></script>
     <script src="{{ url_for('static', filename='js/ngo_features.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
 </body>
 </html>
 

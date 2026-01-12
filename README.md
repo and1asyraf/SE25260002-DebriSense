@@ -25,15 +25,23 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### Running the Application 
+### Running the Application
 
-```bash 
-python app.py 
-``` 
-
-The application will be available at : 
+```bash
+python app.py
+```
 
 ## Technology Stack
 - **Backend:** Python Flask
 - **Frontend:** HTML5, CSS3, JavaScript, Leaflet.js
 - **Maps:** OpenStreetMap via Leaflet
+- **AI Assistant:** Interactive Chatbot Module
+
+## Key Features
+- 🗺️ **Interactive Map Dashboard** - Real-time river monitoring with DRI visualization
+- 📊 **Debris Risk Index (DRI)** - Transparent, rule-based weighted scoring system
+- 🏢 **NGO Tools** - Report debris, request locations, export data, manage watchlist
+- 👑 **Admin Panel** - Manage locations, users, reports, and requests
+- 🤖 **AI Chatbot Assistant** - Context-aware help across all dashboards
+- 🗂️ **Report Management** - Hotspot reports with filtering, viewing, and CSV export
+- 📱 **Fully Responsive** - Optimized for desktop, tablet, and mobile devices

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DebriSense Chatbot - Visual Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .demo-container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        
+        .demo-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .demo-header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .demo-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .demo-card h2 {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .demo-card .icon {
+            font-size: 32px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            color: #495057;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .screenshot-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+        
+        .screenshot-container h2 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .screenshot {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .screenshot h3 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .screenshot-img {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .chatbot-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .chatbot-body {
+            background: #f8f9fa;
+            padding: 15px;
+            min-height: 200px;
+        }
+        
+        .message-preview {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .message-preview.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: 40px;
+        }
+        
+        .button-preview {
+            display: inline-block;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 5px;
+        }
+        
+        .cta-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cta-section h2 {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .cta-section p {
+            font-size: 16px;
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+        
+        .btn-demo {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-demo:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .demo-header h1 {
+                font-size: 32px;
+            }
+            
+            .demo-header p {
+                font-size: 16px;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .screenshot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Header -->
+        <div class="demo-header">
+            <h1>🤖 Interactive Chatbot Module</h1>
+            <p>AI-Powered Assistance for All DebriSense Users</p>
+        </div>
+        
+        <!-- Features Grid -->
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h2><span class="icon">🎨</span> Beautiful Design</h2>
+                <ul class="feature-list">
+                    <li>Modern, clean interface with purple gradient theme</li>
+                    <li>Smooth animations and transitions</li>
+                    <li>Floating action button with pulse effect</li>
+                    <li>Responsive design for all devices</li>
+                    <li>Custom scrollbars and typography</li>
+                </ul>
+            </div>
+            
+            <div class="demo-card">
+                <h2><span class="icon">🧠</span> Smart Features</h2>
+                <ul class="feature-list">
+                    <li>Context-aware responses based on user role</li>
+                    <li>Personalized greetings with user names</li>
+                    <li>Quick reply buttons for common questions</li>
+                    <li>Typing indicator for natural conversation</li>
+                    <li>Comprehensive knowledge base</li>
+                </ul>
+            </div>
+            
+            <div class="demo-card">
+                <h2><span class="icon">📱</span> Responsive</h2>
+                <ul class="feature-list">
+                    <li>Desktop: Fixed widget in bottom-right corner</li>
+                    <li>Tablet: Full-width with margins</li>
+                    <li>Mobile: Full-screen overlay experience</li>
+                    <li>Touch-friendly interface</li>
+                    <li>Adaptive layouts for all screen sizes</li>
+                </ul>
+            </div>
+            
+            <div class="demo-card">
+                <h2><span class="icon">♿</span> Accessible</h2>
+                <ul class="feature-list">
+                    <li>ARIA labels for screen readers</li>
+                    <li>Keyboard navigation support</li>
+                    <li>Clear focus indicators</li>
+                    <li>Semantic HTML structure</li>
+                    <li>High contrast text for readability</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- UI Screenshots -->
+        <div class="screenshot-container">
+            <h2>📸 User Interface Preview</h2>
+            <div class="screenshot-grid">
+                <!-- Chatbot Button -->
+                <div class="screenshot">
+                    <h3>1. Floating Action Button</h3>
+                    <div class="screenshot-img">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); animation: pulse 2s infinite;">
+                            🤖
+                        </div>
+                        <p style="text-align: center; color: #6c757d; font-size: 12px; margin-top: 10px;">Pulsing button in bottom-right corner</p>
+                    </div>
+                </div>
+                
+                <!-- Chat Widget -->
+                <div class="screenshot">
+                    <h3>2. Chat Widget</h3>
+                    <div class="screenshot-img">
+                        <div class="chatbot-preview">
+                            🤖 DebriSense Assistant • Online
+                        </div>
+                        <div class="chatbot-body">
+                            <div class="message-preview">
+                                How can I assist you today?
+                            </div>
+                            <div class="message-preview user">
+                                How do I report debris?
+                            </div>
+                            <div class="message-preview">
+                                To report debris sightings, click on "NGO Tools"...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Replies -->
+                <div class="screenshot">
+                    <h3>3. Quick Reply Buttons</h3>
+                    <div class="screenshot-img">
+                        <div style="padding: 20px; text-align: center;">
+                            <span class="button-preview">How do I report debris?</span>
+                            <span class="button-preview">Explain DRI scores</span>
+                            <span class="button-preview">Request new location</span>
+                            <span class="button-preview">Export data</span>
+                        </div>
+                        <p style="text-align: center; color: #6c757d; font-size: 12px; margin-top: 15px;">One-click common questions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Knowledge Base -->
+        <div class="screenshot-container">
+            <h2>📚 Knowledge Base Topics</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <h2><span class="icon">🏢</span> NGO Users</h2>
+                    <ul class="feature-list">
+                        <li>How to report debris sightings</li>
+                        <li>Understanding DRI scores</li>
+                        <li>Requesting new monitoring locations</li>
+                        <li>Exporting data (CSV format)</li>
+                        <li>Managing watchlist</li>
+                    </ul>
+                </div>
+                
+                <div class="demo-card">
+                    <h2><span class="icon">👑</span> Admin Users</h2>
+                    <ul class="feature-list">
+                        <li>Adding new monitoring locations</li>
+                        <li>Managing NGO user accounts</li>
+                        <li>Viewing debris reports</li>
+                        <li>Handling location requests</li>
+                        <li>System administration</li>
+                    </ul>
+                </div>
+                
+                <div class="demo-card">
+                    <h2><span class="icon">🌍</span> Public Users</h2>
+                    <ul class="feature-list">
+                        <li>What is DebriSense?</li>
+                        <li>How DRI calculation works</li>
+                        <li>Viewing river status</li>
+                        <li>Understanding risk levels</li>
+                        <li>Contact information</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <h2>Ready to Experience It?</h2>
+            <p>The chatbot is now integrated into all DebriSense dashboards.<br>
+            Visit the NGO Dashboard, Admin Dashboard, or Public Map to try it out!</p>
+            <a href="/" class="btn-demo">Launch DebriSense</a>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 30px rgba(102, 126, 234, 0.7), 0 0 0 10px rgba(102, 126, 234, 0.1);
+            }
+            100% {
+                box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            }
+        }
+    </style>
+</body>
+</html>
+

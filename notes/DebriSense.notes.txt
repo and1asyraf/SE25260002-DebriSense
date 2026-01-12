@@ -1,0 +1,132 @@
+# DEBRISENSE PROJECT - QUICK SUMMARY
+
+## What It Is 
+DebriSense is a web-based dashboard that predicts debris accumulation in Malaysian rivers using a *Debris Risk Index (DRI)* - a weighted index system modeled after Malaysia's Department of Environment (DOE) Water Quality Index (WQI).
+
+**Important:** This system does NOT use machine learning or AI. It uses a transparent, rule-based weighted index calculation similar to DOE's established WQI methodology.
+
+## The Problem
+- Malaysian rivers heavily polluted with debris (68.2% plastic in Sungai Kelantan, 11,600 kg/day in Klang River)
+- Existing systems only monitor water quality (chemical parameters), not debris
+- Current approaches are reactive, not predictive 
+- No integration between weather, sensors, and debris forecasting
+
+## The Solution
+A predictive dashboard using **weighted index methodology** (NOT machine learning):
+- DebriSense uses a weighted index calculation system modeled after Malaysia's Department of Environment (DOE)
+  Water Quality Index (WQI) methodology - it is NOT machine learning. The system collects four environmental 
+  parameters: rainfall (mm), wind speed (kph), tide level (m), and water flow rate (m³/s) from real-time weather APIs and
+   simulated IoT sensors. Each parameter is first normalized to a 0-100 scale by dividing the current value by its maximum
+    threshold (e.g., rainfall/50mm × 100), similar to how DOE calculates sub-indices for water quality parameters. 
+    These normalized values are then multiplied by scientifically-determined weights based on literature review: rainfall 
+    gets 40% weight (primary driver of urban debris runoff), wind speed 25% (secondary debris movement factor), 
+    tide level 20% (tidal distribution influence), and water flow 15% (transport capacity). The weighted sum produces a 
+    DRI score from 0-100, which is classified into risk levels: Very Low (0-30), Low (30-50), Medium (50-70), High (70-85), 
+    or Critical (85-100). The system also estimates debris amount in kg/day by scaling the DRI score proportionally 
+    to the Klang River baseline study (11,600 kg/day at DRI 70). For future predictions (6h, 12h, 24h), 
+    the system applies the same DRI calculation but uses weather forecast data and applies adjustment factors 
+    based on predicted rainfall changes, making it a transparent, rule-based predictive system rather than a black-box AI model. 
+- Shows real-time environmental data on interactive map
+- Color-coded risk levels (Very Low → Critical) 
+- Enables proactive river management through rule-based risk assessment
+
+## Technology Stack
+**Backend:**
+- Python Flask (web framework)
+- **Debris Risk Index (DRI) calculation system** - weighted index methodology inspired by DOE's WQI (NOT machine learning) (need to explain how I do my Debris Risk Index, give reference!) 
+- WeatherAPI.com (real-time weather)
+- IoT sensor simulation
+
+**Frontend:**
+- HTML5, CSS3, JavaScript
+- Leaflet.js (interactive maps) 
+- Chart.js (data visualization)
+
+**Data Storage:** 
+- Supabase (for authentication of admin account) 
+- PostgreSQL (for keeping river image, and river name, coordinates and other details)
+
+
+## Key Features
+1. Interactive map with color-coded river risk markers
+2. Real-time sensor and weather data display
+3. DRI-powered predictions (6h, 12h, 24h)
+4. Risk assessment with confidence scores
+5. Data exploration and filtering
+6. Trend analysis with charts
+
+## Debris Risk Index (DRI) Methodology
+**Inspired by DOE Malaysia's Water Quality Index (WQI)**
+
+- Algorithm: Weighted Index System
+- Input factors with weights:
+  - Rainfall: 40% (primary factor - urban runoff, stormwater transport)
+  - Wind Speed: 25% (secondary factor - wind-driven debris movement)
+  - Tide Level: 20% (tertiary factor - tidal influence on debris)
+  - Water Flow: 15% (supporting factor - transport capacity)
+- Each factor normalized to 0-100 scale
+- DRI score calculated as weighted sum
+- Risk classification: Very Low (0-30), Low (30-50), Medium (50-70), High (70-85), Critical (85-100)
+- Estimated debris output in kg/day based on Klang River baseline (11,600 kg/day at DRI 70)
+
+## Prediction Methodology
+**NOT Machine Learning - Uses Rule-Based Weighted Index**
+
+1. Extract current environmental factors from sensors and weather
+2. Normalize each factor to 0-100 scale
+3. Calculate weighted DRI score
+4. For future predictions (6h, 12h, 24h):
+   - Analyze weather forecast
+   - Apply adjustment factor based on predicted conditions
+   - Recalculate DRI with forecast data
+5. Classify risk level based on DRI thresholds
+6. Estimate debris amount (kg/day) proportional to DRI score
+
+**Advantages of DRI approach:**
+- ✅ Transparent and explainable methodology
+- ✅ Based on established DOE WQI principles
+- ✅ Scientifically defensible with literature-backed weights
+- ✅ Deterministic calculations (high confidence)
+- ✅ No reliance on training data unavailable in Malaysia
+- ✅ Easy to adjust weights based on domain expert input
+
+
+## Project Status
+- Prototype completed for MarineHack Hackathon
+- Being enhanced for Final Year Project (CAT404)
+- Pivoted from ML to DRI methodology for scientific rigor
+- 8-10 week development timeline
+
+## Unique Features
+- **First Malaysian system using DRI weighted index for debris prediction (NO machine learning)**
+- **Modeled after DOE's established WQI methodology** - scientifically defensible approach
+- Multi-timeframe predictions (6h, 12h, 24h) using rule-based calculations
+- Predictive (not reactive) approach
+- Integration of Weather API + IoT simulation
+- Transparent, explainable methodology (not "black box" AI)
+- Accessible to non-technical users
+
+## Target Users
+- Environmental agencies (DOE Malaysia)
+- Local governments
+- NGOs
+- Researchers
+- Community organizations
+
+## Important Notes - Methodology Clarification
+- ⚠️ **DOES NOT USE MACHINE LEARNING OR AI** - Uses transparent weighted index system
+- **DRI methodology directly inspired by DOE Malaysia's Water Quality Index (WQI)**
+- Scientifically defensible rule-based calculations with literature-backed weights
+- Uses SIMULATED sensor data (not real IoT sensors yet)
+- CSV-based storage (prototype phase)
+- Requires internet for Weather API
+- Designed as proof-of-concept/demonstration system 
+- Weights (Rainfall 40%, Wind 25%, Tide 20%, Flow 15%) based on environmental research or can change, now this will be the value I come up with.  
+- All calculations are transparent and explainable (not "black box" predictions)  
+
+
+Modules: 
+1. Admin Account Module 
+2. 
+
+

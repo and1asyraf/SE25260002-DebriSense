@@ -19,6 +19,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
 </head>
 <body>
     <!-- Top Navbar -->
@@ -129,6 +130,13 @@
                 <h4>Debris Reports</h4>
                 <p>Review debris sighting reports from NGOs</p>
                 <a href="{{ url_for('admin_reports') }}" class="action-btn">View Reports</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">🗺️</div>
+                <h4>Hotspot Reports</h4>
+                <p>Advanced hotspot analysis and management</p>
+                <a href="{{ url_for('admin_hotspot_reports') }}" class="action-btn">Manage Hotspots</a>
             </div>
             
             <div class="action-card">
@@ -243,6 +251,7 @@
     <script src="{{ url_for('static', filename='js/public_map.js') }}"></script>
     <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
 </body>
 </html>
 

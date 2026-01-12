@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotspot Reports - Admin | DebriSense</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    
+    <!-- Google Fonts - Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_pages.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/report_management.css') }}">
+</head>
+<body class="admin-page">
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <a href="{{ url_for('admin_dashboard') }}">
+                    <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
+                </a>
+                <span class="admin-badge">Admin</span>
+            </div>
+            <div class="navbar-actions">
+                <a href="{{ url_for('admin_dashboard') }}" class="navbar-btn">Dashboard</a>
+                <a href="{{ url_for('admin_logout') }}" class="navbar-btn logout-btn">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="admin-content" style="overflow-y: auto; overflow-x: hidden;">
+        <!-- Page Header -->
+        <div class="hotspot-header">
+            <div>
+                <h2>🗺️ Hotspot Reports Management</h2>
+                <p style="color: #6c757d; margin-top: 8px;">Monitor and manage debris reports from all NGOs</p>
+            </div>
+            <div class="hotspot-actions">
+                <button class="btn-export" onclick="showDownloadModal()">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M7 10L12 15M12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Export All Reports
+                </button>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        <div id="hotspot-stats-container"></div>
+        
+        <!-- Filters -->
+        <div class="hotspot-container">
+            <div class="download-filter-section">
+                <h3 style="margin-bottom: 15px;">🔍 Filter Reports</h3>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="filter-status">Status</label>
+                        <select id="filter-status">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="reviewed">Reviewed</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-debris-type">Debris Type</label>
+                        <select id="filter-debris-type">
+                            <option value="all">All Types</option>
+                            <option value="plastic">Plastic</option>
+                            <option value="organic">Organic</option>
+                            <option value="household">Household</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-date-from">Date From</label>
+                        <input type="date" id="filter-date-from">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-date-to">Date To</label>
+                        <input type="date" id="filter-date-to">
+                    </div>
+                </div>
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="btn-secondary" onclick="clearFilters()">Clear Filters</button>
+                    <button class="btn-primary" onclick="applyFilters()">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reports Grid -->
+        <div class="hotspot-container">
+            <div id="reports-container">
+                <div class="loading-reports">
+                    <div class="loading-spinner"></div>
+                    <p>Loading hotspot reports...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Download Modal -->
+    <div class="report-modal" id="download-modal">
+        <div class="report-modal-content" style="max-width: 600px;">
+            <div class="report-modal-header">
+                <h2>📥 Download Reports</h2>
+                <button class="report-modal-close" onclick="closeDownloadModal()">×</button>
+            </div>
+            <div class="report-modal-body">
+                <div class="download-options">
+                    <h3>Select Export Format</h3>
+                    <div class="download-format-grid">
+                        <div class="download-format-btn" onclick="downloadReports('csv')">
+                            <div class="format-icon">📄</div>
+                            <div class="format-name">CSV</div>
+                        </div>
+                        <div class="download-format-btn" onclick="downloadReports('excel')">
+                            <div class="format-icon">📊</div>
+                            <div class="format-name">Excel</div>
+                        </div>
+                    </div>
+                    
+                    <div class="download-filter-section" style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 15px;">Export Options</h4>
+                        <div class="filter-group">
+                            <label>
+                                <input type="checkbox" id="export-current-filters" checked style="margin-right: 8px;">
+                                Use current filters
+                            </label>
+                        </div>
+                        <div class="filter-group" style="margin-top: 10px;">
+                            <label>
+                                <input type="checkbox" id="export-include-photos" style="margin-right: 8px;">
+                                Include photo URLs
+                            </label>
+                        </div>
+                        <div class="filter-group" style="margin-top: 10px;">
+                            <label>
+                                <input type="checkbox" id="export-admin-notes" checked style="margin-right: 8px;">
+                                Include admin notes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-message"></span>
+    </div>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/report_management.js') }}"></script>
+    
+    <script>
+        // Initialize page
+        async function initHotspotReports() {
+            await reportManagement.loadHotspotReports();
+            reportManagement.renderHotspotStats('hotspot-stats-container');
+            reportManagement.renderReportGrid('reports-container');
+        }
+        
+        function applyFilters() {
+            const filters = {
+                status: document.getElementById('filter-status').value,
+                debris_type: document.getElementById('filter-debris-type').value,
+                date_from: document.getElementById('filter-date-from').value,
+                date_to: document.getElementById('filter-date-to').value
+            };
+            
+            reportManagement.loadHotspotReports(filters).then(() => {
+                reportManagement.renderReportGrid('reports-container');
+            });
+        }
+        
+        function clearFilters() {
+            document.getElementById('filter-status').value = 'all';
+            document.getElementById('filter-debris-type').value = 'all';
+            document.getElementById('filter-date-from').value = '';
+            document.getElementById('filter-date-to').value = '';
+            applyFilters();
+        }
+        
+        function showDownloadModal() {
+            document.getElementById('download-modal').classList.add('active');
+        }
+        
+        function closeDownloadModal() {
+            document.getElementById('download-modal').classList.remove('active');
+        }
+        
+        function downloadReports(format) {
+            const useFilters = document.getElementById('export-current-filters').checked;
+            const filters = useFilters ? {
+                status: document.getElementById('filter-status').value,
+                debris_type: document.getElementById('filter-debris-type').value,
+                date_from: document.getElementById('filter-date-from').value,
+                date_to: document.getElementById('filter-date-to').value
+            } : {};
+            
+            reportManagement.downloadAllReports(filters);
+            closeDownloadModal();
+        }
+        
+        // Load reports on page load
+        document.addEventListener('DOMContentLoaded', initHotspotReports);
+    </script>
+</body>
+</html>
+
