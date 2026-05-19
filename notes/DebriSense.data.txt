@@ -1,0 +1,47 @@
+DebriSense Database Entities (as defined in models.py):
+
+1. Admin
+   - System administrator accounts.
+
+2. User 
+   - NGO User accounts for authentication and profiles.
+
+3. River 
+   - The river/hotspot locations that are monitored for debris.
+
+4. DRIReading 
+   - Historical records of the Debris Risk Index calculations (includes rainfall, wind, tide, water flow, and estimated debris).
+
+5. HotspotReport
+   - Cleanup reports submitted by NGOs (includes actual collected amounts for plastic, organic, etc., and snapshot data).
+
+6. Watchlist 
+   - NGO user's watchlist/favorites for specific rivers.
+
+7. LocationRequest 
+   - Requests submitted by NGOs to administrators to add new river hotspots to the system.
+
+8. Alert 
+   - System-generated risk alerts for specific rivers.
+
+---
+
+The Entity Relationship Diagram (ERD) of DebriSense outlines the key entities and their relationships within the system, focusing on efficient data management and analysis for river debris monitoring.
+The primary entities include:
+• USER (NGO and ADMINISTRATOR)
+• RIVER
+• DRI_READING
+• HOTSPOT_REPORT
+• WATCHLIST
+• LOCATION_REQUEST
+• ALERT
+
+The USER entity is subdivided into two specific roles which are NGO and ADMINISTRATOR. NGO users can submit hotspot cleanup reports, monitor predictive data, manage their watchlist, request new hotspots, and receive risk alerts. Administrators can oversee user accounts, approve location requests, and manage the active river monitoring sites.
+
+Additionally, the RIVER and DRI_READING entities indicate the core datasets within the system. RIVER stores the physical hotspot locations and baseline debris profiles categorized by land-use types. DRI_READING acts as the historical and real-time ledger for the Debris Risk Index calculations, storing environmental parameters (rainfall, wind speed, tide level, water flow) and the resulting estimated debris payload.
+
+Moreover, the platform leverages these DRI_READINGs to continuously forecast debris accumulation. This predictive process is automatically triggered by background systems and is used to generate an ALERT if the estimated risk level becomes High or Critical. These alerts serve as early warning signals for NGO users tracking specific rivers via the WATCHLIST entity, empowering them to preemptively organize cleanup operations and mitigate potential environmental impacts.
+
+The HOTSPOT_REPORT entity allows NGO users to document actual cleanup operations with empirical data, including the total payload collected and a breakdown of debris types. These reports are crucial for tracking historical debris trends and informing future predictive models. Meanwhile, the LOCATION_REQUEST entity allows NGOs to proactively propose new river hotspots for monitoring.
+
+The relationships between these entities are strategically designed to maintain data integrity and streamline functionalities such as real-time monitoring, predictive analytics, and comprehensive empirical reporting. These capabilities enhance the system’s ability to facilitate proactive river cleanup logistics, support environmental sustainability, and respond effectively to severe debris accumulation incidents.

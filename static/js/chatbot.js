@@ -307,37 +307,32 @@ class DebriSenseChatbot {
         }
     }
     
-    processBotResponse(userMessage) {
-        const lowerMessage = userMessage.toLowerCase();
-        
-        // Knowledge base responses
-        const responses = {
-            'report': this.getReportHelp(),
-            'dri': this.getDRIExplanation(),
-            'location': this.getLocationHelp(),
-            'export': this.getExportHelp(),
-            'add location': this.getAddLocationHelp(),
-            'user account': this.getUserManagementHelp(),
-            'what is debrisense': this.getAboutDebriSense(),
-            'contact': this.getContactInfo(),
-            'river': this.getRiverStatusHelp()
-        };
-        
-        // Find matching response
-        let response = null;
-        for (const [keyword, responseFunc] of Object.entries(responses)) {
-            if (lowerMessage.includes(keyword)) {
-                response = responseFunc;
-                break;
+    async processBotResponse(userMessage) {
+        try {
+            const response = await fetch('/api/chatbot/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    role: this.userRole
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Strip markdown formatting if any accidentally leaked through, keeping HTML
+                let formattedText = data.response.replace(/```html\n?|```/g, '').trim();
+                this.addBotMessage(formattedText);
+            } else {
+                this.addBotMessage(`⚠️ Error: ${data.error}`);
             }
+        } catch (error) {
+            console.error('Chatbot API Error:', error);
+            this.addBotMessage("Sorry, I'm having trouble connecting to my AI brain. Please try again later. 🤖⚡");
         }
-        
-        // Default response if no match
-        if (!response) {
-            response = this.getDefaultResponse();
-        }
-        
-        this.addBotMessage(response);
     }
     
     // Knowledge Base Methods

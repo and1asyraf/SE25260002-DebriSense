@@ -1,0 +1,464 @@
+Test Case ID: ST001
+Test Case Name: End-to-End NGO Workflow
+Description: Verifies the complete NGO system flow from account creation, monitoring, and data submission.
+
+ID: ST001-TC-01
+Test Procedure:
+1. User navigates to the registration page.
+2. User fills up the registration form with valid input.
+3. User clicks on "Register" button.
+Test Input:
+Email:
+ngo1@example.com
+Password:
+securepass123
+Confirm Password:
+securepass123
+NGO Name:
+Ocean Protectors
+Expected Result:
+New NGO account is created and stored in the database. User is redirected to login page with a success message.
+
+ID: ST001-TC-02
+Test Procedure:
+1. User navigates to the registration page.
+2. User fills up the form with mismatched passwords.
+3. User clicks on "Register" button.
+Test Input:
+Email:
+ngo2@example.com
+Password:
+securepass123
+Confirm Password:
+wrongpass999
+NGO Name:
+River Guardians
+Expected Result:
+Error message "Passwords do not match" is displayed. New account is not created.
+
+ID: ST001-TC-03
+Test Procedure:
+1. User navigates to the login page.
+2. User enters valid registered credentials.
+3. User clicks on "Login" button.
+Test Input:
+Email:
+ngo1@example.com
+Password:
+securepass123
+Expected Result:
+User is successfully authenticated and redirected to the interactive map dashboard.
+
+ID: ST001-TC-04
+Test Procedure:
+1. User navigates to the login page.
+2. User enters an unregistered email.
+3. User clicks on "Login" button.
+Test Input:
+Email:
+unknown@example.com
+Password:
+securepass123
+Expected Result:
+Error message "Invalid credentials" is displayed. User is not logged in.
+
+ID: ST001-TC-05
+Test Procedure:
+1. Logged-in user navigates to the Profile Settings page.
+2. User updates the contact person and phone number.
+3. User clicks on "Save Changes".
+Test Input:
+Contact Person:
+John Doe
+Phone Number:
+0123456789
+Expected Result:
+Profile information is updated in the database. Success message is displayed.
+
+ID: ST001-TC-06
+Test Procedure:
+1. Logged-in user navigates to the Profile Settings page.
+2. User clears the required NGO Name field.
+3. User clicks on "Save Changes".
+Test Input:
+NGO Name:
+(Empty)
+Expected Result:
+Browser validation error "This field is required" is displayed. Profile is not updated.
+
+ID: ST001-TC-07
+Test Procedure:
+1. User navigates to the Dashboard.
+2. User waits for the interactive map to load.
+Test Input:
+Action:
+View Map
+Expected Result:
+The map initializes correctly. All active river markers are fetched from the database and displayed.
+
+ID: ST001-TC-08
+Test Procedure:
+1. User navigates to the map dashboard.
+2. User toggles the "Show Watchlist Only" checkbox to ON.
+Test Input:
+Action:
+Check Watchlist box
+Expected Result:
+Map filters out non-watched rivers. Only markers present in the user's watchlist remain visible.
+
+ID: ST001-TC-09
+Test Procedure:
+1. User navigates to the map dashboard.
+2. User clicks on a specific river marker.
+Test Input:
+River Marker:
+Sungai Pinang
+Expected Result:
+The Hotspot Details sidebar slides open, displaying the specific river's name, DRI, and charts.
+
+ID: ST001-TC-10
+Test Procedure:
+1. User opens the Hotspot Details sidebar for a river.
+2. User clicks the "Add to Watchlist" button.
+Test Input:
+River Marker:
+Sungai Pinang
+Expected Result:
+River is added to the user's watchlist in the database. The button UI changes to "Remove from Watchlist".
+
+ID: ST001-TC-11
+Test Procedure:
+1. User opens the Hotspot Details sidebar for a watched river.
+2. User clicks the "Remove from Watchlist" button.
+Test Input:
+River Marker:
+Sungai Pinang
+Expected Result:
+River is removed from the watchlist database. The button UI changes back to "Add to Watchlist".
+
+ID: ST001-TC-12
+Test Procedure:
+1. User opens the Hotspot Details sidebar.
+2. User scrolls to the Hotspot Cleanup Report form.
+3. User fills in valid cleanup data.
+4. User clicks "Submit Report".
+Test Input:
+Payload (kg):
+150
+Plastic (%):
+50
+Organic (%):
+50
+Expected Result:
+Report is successfully saved to the database. A success toast appears.
+
+ID: ST001-TC-13
+Test Procedure:
+1. User opens the Hotspot Details sidebar.
+2. User scrolls to the Hotspot Cleanup Report form.
+3. User leaves the Payload field empty and fills the rest.
+4. User clicks "Submit Report".
+Test Input:
+Payload (kg):
+(Empty)
+Plastic (%):
+50
+Expected Result:
+Form validation blocks submission. Error message prompts user to fill the payload field. Data is not saved.
+
+ID: ST001-TC-14
+Test Procedure:
+1. User clicks the "Request New Hotspot" button.
+2. User fills the form with valid coordinates and reason.
+3. User clicks "Submit Request".
+Test Input:
+River Name:
+Sungai Juru
+Latitude:
+5.312
+Longitude:
+100.412
+Reason:
+Heavy plastic accumulation observed.
+Expected Result:
+Location request is saved to the database with a "Pending" status. Success message is displayed to the user.
+
+ID: ST001-TC-15
+Test Procedure:
+1. User clicks the "Request New Hotspot" button.
+2. User fills the form with invalid alphabetical coordinates.
+3. User clicks "Submit Request".
+Test Input:
+Latitude:
+ABC
+Longitude:
+XYZ
+Expected Result:
+Browser validation error "Please enter a valid number" is displayed. Request is not submitted.
+
+ID: ST001-TC-16
+Test Procedure:
+1. User opens the Hotspot Details sidebar for a river.
+2. User scrolls to the Prediction Insights section.
+Test Input:
+Action:
+View Charts
+Expected Result:
+The doughnut chart renders perfectly, displaying the calculated breakdown of plastic, organic, and industrial waste based on the river's land use profile.
+
+ID: ST001-TC-17
+Test Procedure:
+1. User opens the Hotspot Details sidebar for a river.
+2. User scrolls to the Historical Reports section.
+Test Input:
+Action:
+View List
+Expected Result:
+A list of past cleanup reports for that specific river is fetched from the database and displayed correctly with dates and payload amounts.
+
+ID: ST001-TC-18
+Test Procedure:
+1. User opens the Hotspot Details sidebar for a river.
+2. User clicks the "Download CSV" button under Historical Reports.
+Test Input:
+Action:
+Click Download
+Expected Result:
+A valid CSV file containing the historical cleanup data is generated and downloaded to the user's device.
+
+ID: ST001-TC-19
+Test Procedure:
+1. User opens the Interactive Chatbot window.
+2. User types a question regarding river cleanup protocols.
+3. User clicks "Send".
+Test Input:
+Message:
+"What is the standard procedure for industrial waste?"
+Expected Result:
+The backend securely queries the Gemini API. A relevant, markdown-formatted response is returned and displayed in the chat interface.
+
+ID: ST001-TC-20
+Test Procedure:
+1. User clicks on their profile dropdown in the top right.
+2. User clicks on "Logout".
+Test Input:
+Action:
+Click Logout
+Expected Result:
+User session is securely destroyed. User is redirected to the public home page.
+
+
+Test Case ID: ST002
+Test Case Name: End-to-End Admin Workflow
+Description: Verifies the flow for administrators managing the platform's users, locations, and system health.
+
+ID: ST002-TC-01
+Test Procedure:
+1. Admin navigates to the login page.
+2. Admin enters valid admin credentials.
+3. Admin clicks "Login".
+Test Input:
+Email:
+admin@debrisense.com
+Password:
+adminpass123
+Expected Result:
+Admin is authenticated successfully and redirected to the Admin Dashboard.
+
+ID: ST002-TC-02
+Test Procedure:
+1. Admin navigates to the login page.
+2. Admin enters incorrect password.
+3. Admin clicks "Login".
+Test Input:
+Email:
+admin@debrisense.com
+Password:
+wrongpass
+Expected Result:
+Error message "Invalid credentials" is displayed. Admin is not authenticated.
+
+ID: ST002-TC-03
+Test Procedure:
+1. Admin logs in and views the main dashboard.
+Test Input:
+Action:
+View Dashboard Map
+Expected Result:
+The map loads all river hotspots across the system, regardless of watchlists, allowing global oversight.
+
+ID: ST002-TC-04
+Test Procedure:
+1. Admin clicks on the "Manage Users" tab in the sidebar.
+Test Input:
+Action:
+Navigate to Manage Users
+Expected Result:
+A table containing all registered NGO accounts is fetched from the database and displayed.
+
+ID: ST002-TC-05
+Test Procedure:
+1. Admin navigates to the "Manage Users" tab.
+2. Admin locates an unverified NGO.
+3. Admin clicks the "Verify" toggle switch.
+Test Input:
+Target User:
+Ocean Protectors
+Action:
+Toggle Verify ON
+Expected Result:
+The user's is_verified flag updates to True in the database. The table displays a verified checkmark.
+
+ID: ST002-TC-06
+Test Procedure:
+1. Admin navigates to the "Manage Users" tab.
+2. Admin locates a verified NGO.
+3. Admin clicks the "Verify" toggle switch to revoke access.
+Test Input:
+Target User:
+Ocean Protectors
+Action:
+Toggle Verify OFF
+Expected Result:
+The user's is_verified flag updates to False. The NGO immediately loses access to protected features.
+
+ID: ST002-TC-07
+Test Procedure:
+1. Admin navigates to the "Manage Users" tab.
+2. Admin types an NGO name into the search bar.
+Test Input:
+Search Query:
+"Guardians"
+Expected Result:
+The table filters dynamically to only show accounts matching the word "Guardians".
+
+ID: ST002-TC-08
+Test Procedure:
+1. Admin clicks on the "Manage Hotspots" tab in the sidebar.
+Test Input:
+Action:
+Navigate to Manage Hotspots
+Expected Result:
+A list of all pending location requests submitted by NGOs is fetched and displayed.
+
+ID: ST002-TC-09
+Test Procedure:
+1. Admin navigates to the "Manage Hotspots" tab.
+2. Admin reviews a pending request and clicks "Approve".
+Test Input:
+Request ID:
+REQ-001
+Action:
+Approve
+Expected Result:
+A new River entry is inserted into the database. The request status updates to Approved.
+
+ID: ST002-TC-10
+Test Procedure:
+1. Admin navigates to the "Manage Hotspots" tab.
+2. Admin reviews a pending request and clicks "Reject".
+Test Input:
+Request ID:
+REQ-002
+Action:
+Reject
+Expected Result:
+The request status updates to Rejected in the database. No new River entry is created.
+
+ID: ST002-TC-11
+Test Procedure:
+1. Admin approves a location request.
+2. Admin navigates back to the interactive map.
+Test Input:
+Action:
+View Map after Approval
+Expected Result:
+The newly approved river marker immediately appears on the map for all users.
+
+ID: ST002-TC-12
+Test Procedure:
+1. Admin rejects a location request.
+2. Admin navigates back to the interactive map.
+Test Input:
+Action:
+View Map after Rejection
+Expected Result:
+The map remains unchanged. The rejected location does not appear on the map.
+
+ID: ST002-TC-13
+Test Procedure:
+1. Admin navigates to the "System Reports" tab.
+Test Input:
+Action:
+View Reports
+Expected Result:
+A global list of all historical cleanup reports from all NGOs is displayed in a comprehensive table.
+
+ID: ST002-TC-14
+Test Procedure:
+1. Admin navigates to the "System Reports" tab.
+2. Admin clicks the "Export All Data" button.
+Test Input:
+Action:
+Download CSV
+Expected Result:
+A comprehensive CSV file containing system-wide historical data is generated and downloaded successfully.
+
+ID: ST002-TC-15
+Test Procedure:
+1. Admin triggers the manual background DRI calculation job via the admin console (or via chron).
+Test Input:
+Action:
+Execute DRI Job
+Expected Result:
+The system fetches weather data, recalculates DRI for all active rivers, and saves new DRIReadings to the database without timing out.
+
+ID: ST002-TC-16
+Test Procedure:
+1. DRI Job executes and results in a "High" risk level for a river.
+Test Input:
+River:
+Sungai Pinang
+Risk Level:
+High
+Expected Result:
+The system generates an Alert record specifically for the "High" threshold and dispatches it.
+
+ID: ST002-TC-17
+Test Procedure:
+1. DRI Job executes and results in a "Critical" risk level for a river.
+Test Input:
+River:
+Sungai Pinang
+Risk Level:
+Critical
+Expected Result:
+The system generates an Alert record specifically for the "Critical" threshold and dispatches it.
+
+ID: ST002-TC-18
+Test Procedure:
+1. Admin monitors the AI Chatbot integration logs.
+Test Input:
+Action:
+Send Chatbot Test Query
+Expected Result:
+The Gemini API returns HTTP 200 OK. Markdown response is received safely without quota errors.
+
+ID: ST002-TC-19
+Test Procedure:
+1. Admin monitors the Weather API integration logs during a DRI update.
+Test Input:
+Action:
+Run Weather Fetch
+Expected Result:
+The external Weather API returns HTTP 200 OK. JSON payload is successfully parsed into rainfall and tide variables.
+
+ID: ST002-TC-20
+Test Procedure:
+1. Admin clicks on their profile dropdown in the top right.
+2. Admin clicks on "Logout".
+Test Input:
+Action:
+Click Logout
+Expected Result:
+Admin session is securely destroyed. Admin is redirected to the public login page, and cannot access the admin dashboard via URL manipulation.

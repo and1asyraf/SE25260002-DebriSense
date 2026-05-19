@@ -1,0 +1,41 @@
+===========================================================
+               DebriSense Demo Presentation
+===========================================================
+
+[Slide 1]
+1.0 About
+- DebriSense is an intelligent, map-based debris monitoring and reporting platform.
+- It unifies public citizens, NGOs, and environmental administrators into a single, cohesive ecosystem to report, track, and strategically analyze river debris.
+- The platform provides a centralized, interactive command center for preserving river health.
+
+[Slide 2]
+2.0 Why DebriSense?
+- Current mitigation of river debris is often fragmented, relying on slow, outdated, or disconnected manual reporting systems.
+- Without a centralized, data-driven dashboard, authorities struggle to predict debris accumulation or allocate cleanup resources efficiently.
+- DebriSense bridges this gap by combining crowdsourced community tracking with predictive analytics, making river mitigation proactive rather than reactive.
+
+[Slide 3]
+3.0 Objectives
+- To develop a real-time river monitoring system that updates hotspot debris status at defined intervals.
+- To develop a predictive Debris Risk Index (DRI) model that generates debris accumulation prediction at fixed time intervals and evaluates hotspot emergence with quantifiable accuracy metrics.
+- To implement an interactive chatbot that provides instant guidance as well as context-aware answers, tailored to stakeholder’s needs.
+
+[Slide 4]
+4.0 Features
+- User Account Management: Tiered accessibility for System Admins, verified NGOs, and standard Public Users.
+- Real-Time River Monitoring: Interactive GIS mapping with personalized Watchlist capabilities.
+- Predictive Debris Risk Index: Data-driven (DRI) modeling to automatically calculate and highlight critical debris hotspots.
+- Interactive Chatbot: An integrated AI assistant to guide users and provide contextual river health answers seamlessly.
+- Report Management: Comprehensive workflow allowing users to submit Hotspot Reports with photo evidence, and for Admins to review and export the data.
+
+[Slide 5]
+5.0 Proposed Solutions
+- Community Crowdsourcing: Empowering both Public and NGO stakeholders to easily report localized trash sightings directly via map pins, multiplying the eyes on the ground.
+- Automated Intelligence: Relieving administrative burden by letting the DRI automatically calculate risk factors and flag locations needing immediate cleanup attention.
+- Streamlined Administration: Offering a centralized dashboard for Admins to perform advanced Hotspot Analysis and moderate user-submitted reports effortlessly.
+
+[Slide 6]
+6.0 What's Next
+- Mobile Application Expansion: Launching native iOS and Android apps for faster, on-the-go reporting in the field.
+- Hardware/IoT Integration: Connecting physical river sensors and AI cameras to fully automate debris imaging and tracking.
+- Geographical Scaling: Expanding the monitoring network beyond the current pilot rivers to encompass nation-wide environmental tracking.

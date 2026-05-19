@@ -1,0 +1,112 @@
+DebriSense Demonstration Session (Flow + Ending)
+
+Goal:
+Show how DebriSense predicts river debris risk (DRI) and how NGOs/Admin can view & act on reports.
+
+Demo Flow (simple “start to finish”)
+1. Setup / Open the app (Start)
+   - Start the website (local or deployed).
+   - Land on the Public Map page.
+   - Briefly say: “This is Malaysia’s river map. Clicking a pin shows the river’s Debris Risk Index (DRI).”
+
+2. Show the prediction works (Public view)
+   - Click a pin (example: Sungai Sarawak).
+   - Show the sidebar updates:
+     - River Information (location, coordinates, added date)
+     - Debris Risk Index (DRI score + risk level)
+     - Weather conditions + factor cards
+     - Predicted debris types
+   - Emphasize: “This is rule-based, transparent, not AI/black-box.”
+
+3. Show “Reports” section gating (login-only)
+   - On the same pin, point out the “Reports” section:
+     - If not logged in: show that it prompts login (or shows an empty/loading message).
+   - Log in as NGO (demo account).
+   - Click the same pin again.
+   - Show that the sidebar now loads “Reports” for that river.
+   - Mention: “Reports are connected to each river/location pin.”
+
+4. Show report submission (NGO action) (Optional but strong)
+   - Navigate to the NGO feature (report submission).
+   - Create a sample debris report for the same river.
+   - Submit the report.
+   - Go back to the map pin (or refresh) and click the same pin.
+   - Show that the new report appears in the sidebar’s Reports section.
+
+5. Show history or additional insights (If you have time)
+   - Open “River history” (if you already have DRI readings).
+   - Show the chart / exported data (only if it works quickly).
+   - Say: “We track changes over time using DRI readings.”
+
+6. Admin review (Admin action) (End section of the demo)
+   - Log out NGO, log in as Admin.
+   - Go to the admin review page (reports/requests).
+   - Show that the report you submitted is now visible for admin review.
+   - Confirm admin notes / status change (if your demo supports it).
+
+End (Where you should end)
+End with a short “wrap-up” statement:
+   - “DebriSense helps NGOs and admins understand debris risk per river using DRI, and it connects reports to each river pin for fast review.”
+   - Mention future improvements (optional 1 line):
+     - “Next, we can improve report accuracy, connect real sensors, and improve scalability.”
+
+Suggested Demostration Time Budget (quick)
+ - 0:00 - 2:00  Intro + public map click
+ - 2:00 - 5:00  Show DRI details
+ - 5:00 - 8:00  Login gating + show reports in sidebar
+ - 8:00 - 12:00 Optional: submit a report + show it appears
+ - 12:00 - 15:00 Optional: admin review + wrap-up
+
+
+How to Make Presentation Slides (simple plan)
+Recommended slide count: 8 to 10 slides (enough for a 10–15 minute demo).
+
+Slide 1: Title
+ - DebriSense: Predictive Debris Risk Monitoring System
+ - Your name + class/project
+
+Slide 2: Problem Statement
+ - Rivers suffer from debris accumulation
+ - Need early risk awareness + fast reporting workflow
+
+Slide 3: Solution Overview
+ - Map-based dashboard
+ - Debris Risk Index (DRI)
+ - NGO report submission + Admin review
+
+Slide 4: How DRI Works (Rule-based)
+ - DRI is calculated using weighted factors (explain quickly)
+ - Transparent and explainable
+
+Slide 5: Demo - Public Map
+ - Show screenshot of clicking a pin
+ - DRI score + risk level + predicted debris types
+
+Slide 6: Demo - Reports in Sidebar (Login-only)
+ - Show: not logged in -> reports hidden/prompt
+ - Show: NGO login -> reports appear
+
+Slide 7: Demo - NGO Action (Report Submission) (Optional)
+ - Submit a mock/real report
+ - Return to pin and show it appears
+
+Slide 8: Demo - Admin Review (Optional)
+ - Admin sees the submitted report for review
+ - Status/admin notes update
+
+Slide 9: Technology / Architecture (short)
+ - Flask backend
+ - Supabase / PostgreSQL
+ - Leaflet map + JS frontend
+
+Slide 10: Future Improvements + Closing
+ - Better report verification
+ - More real sensor integration
+ - Scale up locations and data history
+
+Quick tips for slides (fast & clean)
+ - Use short text: 3–5 bullets per slide.
+ - Add 1 screenshot per main demo slide (pin click, sidebar with DRI, reports section).
+ - Keep fonts large and consistent.
+ - Practice your script once, matching each slide to what you click on screen.
+

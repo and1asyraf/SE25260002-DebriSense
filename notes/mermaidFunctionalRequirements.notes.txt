@@ -1,0 +1,304 @@
+# DebriSense State Chart Diagrams
+
+### 1. Login User
+```mermaid
+stateDiagram-v2
+    [*] --> LoggedOut
+    LoggedOut --> Authenticating : Enter Credentials
+    Authenticating --> LoggedIn : Valid Credentials
+    Authenticating --> LoggedOut : Invalid Credentials
+    LoggedIn --> [*]
+```
+
+### 2. Register User
+```mermaid
+stateDiagram-v2
+    [*] --> FormEmpty
+    FormEmpty --> FormFilled : Enter Details
+    FormFilled --> Validating : Submit
+    Validating --> AccountCreated : Valid & Unique
+    Validating --> FormFilled : Invalid/Email Exists
+    AccountCreated --> [*]
+```
+
+### 3. Update Profile
+```mermaid
+stateDiagram-v2
+    [*] --> ViewingProfile
+    ViewingProfile --> EditingProfile : Click Edit
+    EditingProfile --> SavingChanges : Submit
+    SavingChanges --> ViewingProfile : Success
+    SavingChanges --> EditingProfile : Error
+    ViewingProfile --> [*]
+```
+
+### 4. Logout User
+```mermaid
+stateDiagram-v2
+    [*] --> LoggedIn
+    LoggedIn --> LoggingOut : Click Logout
+    LoggingOut --> LoggedOut : Session Cleared
+    LoggedOut --> [*]
+```
+
+### 5. View Map
+```mermaid
+stateDiagram-v2
+    [*] --> MapLoading
+    MapLoading --> MapInteractive : Rivers Data Fetched
+    MapInteractive --> MapInteractive : Pan/Zoom
+    MapInteractive --> FilteredMap : Apply Filter (Watchlist)
+    FilteredMap --> MapInteractive : Clear Filter
+    MapInteractive --> [*]
+```
+
+### 6. View Hotspot Details
+```mermaid
+stateDiagram-v2
+    [*] --> SidebarHidden
+    SidebarHidden --> LoadingDetails : Click Marker
+    LoadingDetails --> DetailsVisible : Data Fetched
+    DetailsVisible --> SidebarHidden : Close Sidebar
+    DetailsVisible --> [*]
+```
+
+### 7. Submit Hotspot Report
+```mermaid
+stateDiagram-v2
+    [*] --> ReportForm
+    ReportForm --> Submitting : Click Submit
+    Submitting --> SuccessToast : Upload & Save OK
+    Submitting --> ReportForm : Error
+    SuccessToast --> [*]
+```
+
+### 8. Request New Hotspot
+```mermaid
+stateDiagram-v2
+    [*] --> RequestForm
+    RequestForm --> SubmittingRequest : Submit
+    SubmittingRequest --> RequestPending : Saved
+    SubmittingRequest --> RequestForm : Error
+    RequestPending --> [*]
+```
+
+### 9. Display Prediction Insights
+```mermaid
+stateDiagram-v2
+    [*] --> CalculatingDRI
+    CalculatingDRI --> InsightsReady : Processing Complete
+    InsightsReady --> ChartRendered : Draw Pie Chart
+    ChartRendered --> [*]
+```
+
+### 10. Download Report
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> GeneratingCSV : Click Download
+    GeneratingCSV --> Downloading : Ready
+    Downloading --> Idle : Complete
+    Idle --> [*]
+```
+
+### 11. Add Hotspot to Watchlist
+```mermaid
+stateDiagram-v2
+    [*] --> Unwatched
+    Unwatched --> Adding : Click Add
+    Adding --> Watched : Success
+    Adding --> Unwatched : Error
+    Watched --> Removing : Click Remove
+    Removing --> Unwatched : Success
+    Removing --> Watched : Error
+    Watched --> [*]
+```
+
+### 12. Receive Alerts
+```mermaid
+stateDiagram-v2
+    [*] --> NoNewAlerts
+    NoNewAlerts --> UnreadAlerts : New Alert Received
+    UnreadAlerts --> UnreadAlerts : More Alerts Received
+    UnreadAlerts --> AlertsRead : Click Mark Read
+    AlertsRead --> NoNewAlerts : Cleared
+    NoNewAlerts --> [*]
+```
+
+### 13. DRI Calculation
+```mermaid
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> FetchingWeather : Scheduled Trigger
+    FetchingWeather --> Calculating : Weather Received
+    Calculating --> SavingReading : DRI Computed
+    SavingReading --> Idle : DB Saved
+    Idle --> [*]
+```
+
+### 14. Predict Debris Accumulation
+```mermaid
+stateDiagram-v2
+    [*] --> AwaitingDRI
+    AwaitingDRI --> CalculatingPayload : DRI Ready
+    CalculatingPayload --> PredictionSaved : Multiplied by Land Use
+    PredictionSaved --> [*]
+```
+
+### 15. Interactive Chatbot
+```mermaid
+stateDiagram-v2
+    [*] --> ChatIdle
+    ChatIdle --> Typing : User Types
+    Typing --> WaitingForAI : Send Message
+    WaitingForAI --> ResponseDisplayed : AI Replies
+    WaitingForAI --> ErrorDisplayed : Timeout/Error
+    ResponseDisplayed --> ChatIdle
+    ErrorDisplayed --> ChatIdle
+    ChatIdle --> [*]
+```
+
+### 16. Admin Manage Hotspots
+```mermaid
+stateDiagram-v2
+    [*] --> RequestList
+    RequestList --> ReviewingRequest : Select Request
+    ReviewingRequest --> Approving : Click Approve
+    ReviewingRequest --> Rejecting : Click Reject
+    Approving --> RequestApproved : River Created
+    Rejecting --> RequestRejected : Status Updated
+    RequestApproved --> RequestList
+    RequestRejected --> RequestList
+```
+
+### 17. Admin Manage Accounts
+```mermaid
+stateDiagram-v2
+    [*] --> UnverifiedUser
+    UnverifiedUser --> TogglingVerification : Admin Clicks Verify
+    TogglingVerification --> VerifiedUser : Success
+    VerifiedUser --> TogglingVerification : Admin Clicks Unverify
+    TogglingVerification --> UnverifiedUser : Success
+```
+
+### 18. View Historical Reports
+```mermaid
+stateDiagram-v2
+    [*] --> ReportsLoading
+    ReportsLoading --> ReportsDisplayed : Data Fetched
+    ReportsDisplayed --> ReportOverlay : Click Report Card
+    ReportOverlay --> ReportsDisplayed : Close Overlay
+    ReportsDisplayed --> [*]
+```
+
+### 19. Real-Time Data Update
+```mermaid
+stateDiagram-v2
+    [*] --> WaitingForPoll
+    WaitingForPoll --> PollingServer : Timer Expires
+    PollingServer --> UpdatingUI : New Data Found
+    PollingServer --> WaitingForPoll : No New Data
+    UpdatingUI --> WaitingForPoll : Map/Chart Refreshed
+```
+ 
+
+DATABASE DESIGN MERMAID 
+
+```mermaid
+erDiagram
+    USER ||--o{ RIVER : creates
+    USER ||--o{ HOTSPOT_REPORT : submits
+    USER ||--o{ WATCHLIST : manages
+    USER ||--o{ LOCATION_REQUEST : submits
+    USER ||--o{ ALERT : receives
+    RIVER ||--o{ DRI_READING : generates
+    RIVER ||--o{ HOTSPOT_REPORT : receives
+    RIVER ||--o{ WATCHLIST : tracked_in
+    RIVER ||--o{ ALERT : triggers
+
+    USER {
+        int id PK
+        string email
+        string password_hash
+        string ngo_name
+        string contact_person
+        string phone
+        string role
+        boolean is_verified
+        datetime created_at
+        datetime last_login
+    }
+
+    RIVER {
+        int id PK
+        string name
+        float latitude
+        float longitude
+        string info
+        float baseline_plastic
+        float baseline_organic
+        float baseline_household
+        float baseline_industrial
+        float baseline_others
+        datetime created_at
+        int created_by FK
+    }
+
+    DRI_READING {
+        int id PK
+        int river_id FK
+        string risk_level
+        float rainfall_level
+        float wind_speed
+        float tide_level
+        float water_flow
+        float current_dri
+        float baseline_dri
+        float debris_estimate_kg
+        datetime timestamp
+        string land_use
+    }
+
+    HOTSPOT_REPORT {
+        int id PK
+        int river_id FK
+        int reporter_id FK
+        string status
+        float actual_payload
+        string debris_type_breakdown
+        date sighting_date
+        datetime reported_at
+    }
+
+    WATCHLIST {
+        int id PK
+        int user_id FK
+        int river_id FK
+        boolean alert_on_high
+        boolean alert_on_critical
+        boolean email_alerts
+        datetime added_at
+    }
+
+    LOCATION_REQUEST {
+        int id PK
+        int user_id FK
+        string name
+        float latitude
+        float longitude
+        string reason
+        string status
+        datetime submitted_at
+        datetime reviewed_at
+    }
+
+    ALERT {
+        int id PK
+        int user_id FK
+        int river_id FK
+        string title
+        string message
+        boolean is_read
+        datetime created_at
+    }
+```

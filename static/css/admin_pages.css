@@ -650,3 +650,236 @@
     }
 }
 
+/* ------------------------------------- */
+/*  Modern Location Requests UI Updates */
+/* ------------------------------------- */
+
+/* Glass Header Styling */
+.glass-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.2); /* Semi-transparent dark for contrast */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    transition: transform 0.3s ease;
+}
+
+.glass-header:hover {
+    transform: translateY(-2px);
+}
+
+.glass-header h1 {
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 4px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.glass-header p {
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0;
+}
+
+.header-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+    border-radius: 50%;
+    color: #00d2ff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+}
+
+/* Glass Main Panel */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+    padding: 24px;
+}
+
+/* Modern Filter Tabs */
+.modern-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    background: #f1f3f5;
+    padding: 8px;
+    border-radius: 12px;
+    width: max-content;
+}
+
+@media (max-width: 768px) {
+    .modern-tabs {
+        width: 100%;
+        overflow-x: auto;
+    }
+}
+
+.modern-tabs .filter-tab {
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    color: #6c757d;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modern-tabs .filter-tab:hover {
+    color: #495057;
+    background: rgba(0,0,0,0.05);
+}
+
+.modern-tabs .filter-tab.active {
+    background: #fff;
+    color: #1a1a2e;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Modern Table */
+.modern-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.modern-table th {
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    padding: 16px;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.modern-table td {
+    padding: 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f3f5;
+    transition: background 0.2s ease;
+}
+
+.modern-table tbody tr:hover td {
+    background: rgba(0, 123, 255, 0.03);
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Action Buttons Group */
+.action-buttons-group {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.action-btn-icon.view-btn {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+}
+.action-btn-icon.view-btn:hover {
+    background: #007bff;
+    color: #fff;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
+}
+
+.action-btn-icon.approve-btn {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+.action-btn-icon.approve-btn:hover {
+    background: #28a745;
+    color: #fff;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+}
+
+.action-btn-icon.reject-btn {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+.action-btn-icon.reject-btn:hover {
+    background: #dc3545;
+    color: #fff;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(220, 53, 69, 0.3);
+}
+
+/* Glass Modal Enhancements */
+.modern-modal .glass-modal {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 1);
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modern-modal .modal-header {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.btn-glass-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    color: #495057;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+.btn-glass-secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+@keyframes slideUpFade {
+    0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modern-modal.active .glass-modal {
+    animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

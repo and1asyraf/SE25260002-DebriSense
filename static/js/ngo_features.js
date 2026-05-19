@@ -41,7 +41,7 @@ function initializeNGOFeatures() {
     setupModal('report-debris-modal', 'report-debris-btn', 'close-report-modal', 'cancel-report-btn');
     
     // Request Location Modal
-    setupModal('request-location-modal', 'request-location-btn', 'close-request-modal', 'cancel-request-btn');
+    setupModal('request-location-modal', 'request-location-btn', 'close-request-modal', 'cancel-request-btn', initRequestLocationMap);
     
     // My Reports Modal
     setupModal('my-reports-modal', 'my-reports-btn', 'close-my-reports-modal', null, loadMyReports);
@@ -387,6 +387,54 @@ async function loadMyReports() {
 // Location Request Functions
 // ============================================
 
+let requestMap = null;
+let requestMarker = null;
+
+function initRequestLocationMap() {
+    setTimeout(() => {
+        if (!requestMap) {
+            // Default to Kuala Lumpur
+            requestMap = L.map('request-location-map').setView([3.1390, 101.6869], 10);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(requestMap);
+            
+            requestMarker = L.marker([3.1390, 101.6869], { draggable: true }).addTo(requestMap);
+            
+            // Set initial values
+            document.getElementById('req-latitude').value = 3.139000;
+            document.getElementById('req-longitude').value = 101.686900;
+            
+            requestMarker.on('dragend', function() {
+                const position = requestMarker.getLatLng();
+                document.getElementById('req-latitude').value = position.lat.toFixed(6);
+                document.getElementById('req-longitude').value = position.lng.toFixed(6);
+            });
+            
+            requestMap.on('click', function(e) {
+                requestMarker.setLatLng(e.latlng);
+                document.getElementById('req-latitude').value = e.latlng.lat.toFixed(6);
+                document.getElementById('req-longitude').value = e.latlng.lng.toFixed(6);
+            });
+            
+            // Allow manual input to update marker
+            document.getElementById('req-latitude').addEventListener('input', updateMarkerFromInput);
+            document.getElementById('req-longitude').addEventListener('input', updateMarkerFromInput);
+            
+            function updateMarkerFromInput() {
+                const lat = parseFloat(document.getElementById('req-latitude').value);
+                const lng = parseFloat(document.getElementById('req-longitude').value);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    requestMarker.setLatLng([lat, lng]);
+                    requestMap.setView([lat, lng]);
+                }
+            }
+        } else {
+            requestMap.invalidateSize();
+        }
+    }, 250);
+}
+
 async function submitLocationRequest(e) {
     e.preventDefault();
     
@@ -602,3 +650,14 @@ function exportRiverData() {
     showToast('Downloading river data...');
 }
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Watchlist Panel Toggle
+    const watchlistToggleBtn = document.getElementById('watchlist-toggle-btn');
+    const userPanel = document.getElementById('user-panel');
+    if (watchlistToggleBtn && userPanel) {
+        watchlistToggleBtn.addEventListener('click', function() {
+            userPanel.classList.toggle('active');
+        });
+    }
+});

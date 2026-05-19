@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
+          
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,7 +30,9 @@
             <div class="navbar-logo" id="navbar-logo">
                 <img src="{{ url_for('static', filename='img/debrisenseLogo.png') }}" alt="DebriSense Logo">
             </div>
-            <a href="{{ url_for('be_part_of_us') }}" class="navbar-btn desktop-btn">Be Part of Us</a>
+            <div style="display: flex; gap: 10px;">
+                <a href="{{ url_for('be_part_of_us') }}" class="navbar-btn desktop-btn">Be Part of Us</a>
+            </div>
         </div>
         <!-- Mobile Dropdown Menu -->
         <div class="mobile-dropdown" id="mobile-dropdown">
@@ -39,7 +44,7 @@
     <div id="map"></div>
     
     <!-- Right Sidebar for River Details -->
-    <div class="river-sidebar" id="river-sidebar">
+    <div class="bottom-sheet" id="bottom-sheet">
         <div class="sidebar-header">
             <h2 id="sidebar-river-name">River Details</h2>
             <button class="close-sidebar-btn" id="close-sidebar-btn">×</button>

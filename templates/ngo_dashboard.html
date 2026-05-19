@@ -23,6 +23,92 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ngo_dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    
+    <style>
+        .user-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 90px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            width: 320px;
+            max-height: calc(100vh - 120px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transform: translateX(-400px) scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .user-panel.active {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+        .watchlist-toggle-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 999;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .watchlist-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            background: white;
+        }
+        @media (max-width: 768px) {
+            .user-panel { display: none; }
+            .watchlist-toggle-btn { display: none; }
+        }
+        .user-panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: rgba(248, 249, 250, 0.8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-panel-header h3 {
+            margin: 0; font-size: 16px; color: #2c3e50; display:flex; align-items:center; gap:8px;
+        }
+        .user-panel-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .watchlist-item {
+            background: white;
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 12px; border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        .watchlist-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+            border-color: #3498db;
+        }
+    </style>
 </head>
 <body>
     <!-- Top Navbar -->
@@ -115,21 +201,13 @@
         </div>
         
         <div class="sidebar-content">
-            <!-- Watchlist Section -->
-            <div class="tool-section">
-                <h4>⭐ My Watchlist</h4>
-                <div id="watchlist-container" class="watchlist-list">
-                    <p class="loading-text">Loading watchlist...</p>
-                </div>
-            </div>
-            
             <!-- Quick Actions -->
             <div class="tool-section">
                 <h4>⚡ Quick Actions</h4>
                 <div class="action-buttons">
                     <button class="action-btn" id="report-debris-btn">
                         <span class="action-icon">📋</span>
-                        <span>Report Debris</span>
+                        <span>Submit Hotspot Report</span>
                     </button>
                     <button class="action-btn" id="request-location-btn">
                         <span class="action-icon">📍</span>
@@ -159,8 +237,20 @@
     <!-- Map Container -->
     <div id="map"></div>
     
+    <!-- User Panel (Watchlist) -->
+    <button class="watchlist-toggle-btn" id="watchlist-toggle-btn" title="Toggle Watchlist">⭐</button>
+    <div class="user-panel" id="user-panel">
+        <div class="user-panel-header">
+            <h3><span>⭐</span> My Watchlist</h3>
+            <button class="btn-icon-small" onclick="window.loadWatchlist()" style="background:none; border:none; cursor:pointer;" title="Refresh">🔄</button>
+        </div>
+        <div class="user-panel-content" id="watchlist-container">
+            <p style="font-size:13px; color:#6c757d; text-align:center;">Loading watchlist...</p>
+        </div>
+    </div>
+    
     <!-- Right Sidebar for River Details -->
-    <div class="river-sidebar" id="river-sidebar">
+    <div class="bottom-sheet" id="bottom-sheet">
         <div class="sidebar-header">
             <h2 id="sidebar-river-name">River Details</h2>
             <button class="close-sidebar-btn" id="close-sidebar-btn">×</button>
@@ -178,11 +268,11 @@
     <!-- Sidebar Overlay (for mobile) -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     
-    <!-- Report Debris Modal -->
+    <!-- Submit Hotspot Report Modal -->
     <div class="modal" id="report-debris-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📋 Report Debris Sighting</h2>
+                <h2>📋 Submit Hotspot Report Sighting</h2>
                 <button class="close-modal" id="close-report-modal">×</button>
             </div>
             <div class="modal-body">
@@ -194,40 +284,51 @@
                         </select>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="debris-type">Debris Type *</label>
-                        <select id="debris-type" name="debris_type" required>
-                            <option value="plastic">Plastic (bottles, bags, packaging)</option>
-                            <option value="organic">Organic (branches, leaves, dead animals)</option>
-                            <option value="household">Household (furniture, appliances)</option>
-                            <option value="industrial">Industrial (chemicals, construction waste)</option>
-                            <option value="mixed">Mixed / Multiple Types</option>
-                        </select>
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;">Actual Debris Collected / Cleaned</label>
+                        <p style="font-size: 12px; color: #666; margin-top: -5px; margin-bottom: 15px;">Enter the exact weight collected (in kg). Leave as 0 if none.</p>
+                        
+                        <div style="background:#fff; border:1px solid #ced4da; padding:16px; border-radius:12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <label style="color: #495057; margin: 0; font-size: 14px; font-weight: 500;" for="plastic_amount">🥤 Plastic (kg)</label>
+                                <input type="number" id="plastic_amount" name="plastic_amount" step="0.1" min="0" value="0" required style="width: 100px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ced4da; text-align: right;">
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <label style="color: #495057; margin: 0; font-size: 14px; font-weight: 500;" for="organic_amount">🍂 Organic (kg)</label>
+                                <input type="number" id="organic_amount" name="organic_amount" step="0.1" min="0" value="0" required style="width: 100px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ced4da; text-align: right;">
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <label style="color: #495057; margin: 0; font-size: 14px; font-weight: 500;" for="household_amount">🛋️ Household (kg)</label>
+                                <input type="number" id="household_amount" name="household_amount" step="0.1" min="0" value="0" required style="width: 100px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ced4da; text-align: right;">
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <label style="color: #495057; margin: 0; font-size: 14px; font-weight: 500;" for="industrial_amount">🏭 Industrial (kg)</label>
+                                <input type="number" id="industrial_amount" name="industrial_amount" step="0.1" min="0" value="0" required style="width: 100px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ced4da; text-align: right;">
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                                <label style="color: #495057; margin: 0; font-size: 14px; font-weight: 500;" for="others_amount">📦 Others (kg)</label>
+                                <input type="number" id="others_amount" name="others_amount" step="0.1" min="0" value="0" required style="width: 100px; padding: 6px 10px; border-radius: 6px; border: 1px solid #ced4da; text-align: right;">
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="estimated-amount">Estimated Amount *</label>
-                        <select id="estimated-amount" name="estimated_amount" required>
-                            <option value="small">Small (< 10 kg)</option>
-                            <option value="medium">Medium (10-50 kg)</option>
-                            <option value="large">Large (50-200 kg)</option>
-                            <option value="massive">Massive (> 200 kg)</option>
-                        </select>
+                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="sighting-date">Date of Sighting</label>
+                        <input type="date" id="sighting-date" name="sighting_date" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ced4da;">
                     </div>
                     
                     <div class="form-group">
-                        <label for="sighting-date">Date of Sighting</label>
-                        <input type="date" id="sighting-date" name="sighting_date">
+                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="report-description">Description</label>
+                        <textarea id="report-description" name="description" rows="3" placeholder="Describe what you observed..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ced4da;"></textarea>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="report-description">Description</label>
-                        <textarea id="report-description" name="description" rows="3" placeholder="Describe what you observed..."></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="report-photo">Photo (Optional)</label>
-                        <input type="file" id="report-photo" name="photo" accept="image/*">
+                    <div class="form-group" style="margin-bottom: 30px;">
+                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="report-photo">Photo Evidence (Optional)</label>
+                        <div style="border: 2px dashed #ced4da; border-radius: 12px; padding: 20px; text-align: center; background: #f8f9fa;">
+                            <span style="font-size: 24px; display: block; margin-bottom: 10px;">📸</span>
+                            <input type="file" id="report-photo" name="photo" accept=".png,.jpeg,.jpg" style="display: block; margin: 0 auto; color: #495057; font-size: 14px;">
+                            <p style="font-size: 12px; color: #6c757d; margin-top: 10px;">Supported formats: PNG, JPEG, JPG</p>
+                        </div>
                     </div>
                     
                     <div class="modal-actions">
@@ -251,6 +352,12 @@
                     <div class="form-group">
                         <label for="location-name">Location/River Name *</label>
                         <input type="text" id="location-name" name="location_name" required placeholder="e.g., Sungai Gombak">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pin Location on Map</label>
+                        <div id="request-location-map" style="height: 250px; width: 100%; border-radius: 8px; margin-bottom: 15px; z-index: 1;"></div>
+                        <p style="font-size: 12px; color: #666; margin-top: 5px;">Drag the marker to the desired location.</p>
                     </div>
                     
                     <div class="form-row">
@@ -309,7 +416,7 @@
     <div class="modal" id="my-reports-modal">
         <div class="modal-content modal-large">
             <div class="modal-header">
-                <h2>📊 My Debris Reports</h2>
+                <h2>📊 My Hotspot Reports</h2>
                 <button class="close-modal" id="close-my-reports-modal">×</button>
             </div>
             <div class="modal-body">

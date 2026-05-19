@@ -26,6 +26,8 @@ class Admin(UserMixin, db.Model):
     # Relationship to rivers added by admin
     rivers = db.relationship('River', backref='added_by_admin', lazy='dynamic', 
                             foreign_keys='River.admin_id')
+    hotspot_reports = db.relationship('HotspotReport', backref='reviewer', lazy='dynamic',
+                                     foreign_keys='HotspotReport.reviewed_by')
     
     def set_password(self, password):
         """Hash and set password"""
@@ -229,17 +231,32 @@ class DRIReading(db.Model):
 # NGO Feature Models
 # ============================================
 
-class DebrisReport(db.Model):
-    """Debris sighting reports submitted by NGOs"""
-    __tablename__ = 'debris_reports'
+class HotspotReport(db.Model):
+    """User submitted reports about a hotspot"""
+    __tablename__ = 'hotspot_reports'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True) # NGO User
     river_id = db.Column(db.Integer, db.ForeignKey('rivers.id'), nullable=False)
     
     # Report details
     debris_type = db.Column(db.String(50), nullable=False)  # plastic, organic, household, industrial, mixed
     estimated_amount = db.Column(db.String(50), nullable=False)  # small, medium, large, massive
+    
+    # Exact quantities (kg)
+    plastic_amount = db.Column(db.Float, nullable=True, default=0.0)
+    organic_amount = db.Column(db.Float, nullable=True, default=0.0)
+    household_amount = db.Column(db.Float, nullable=True, default=0.0)
+    industrial_amount = db.Column(db.Float, nullable=True, default=0.0)
+    others_amount = db.Column(db.Float, nullable=True, default=0.0)
+    
+    # Snapshot of API inputs at time of report (for Knowledge Engineering validation)
+    snapshot_rainfall = db.Column(db.Float, nullable=True)
+    snapshot_wind_speed = db.Column(db.Float, nullable=True)
+    snapshot_tide_level = db.Column(db.Float, nullable=True)
+    snapshot_water_flow = db.Column(db.Float, nullable=True)
+    snapshot_estimated_payload = db.Column(db.Float, nullable=True)
+    
     description = db.Column(db.Text, nullable=True)
     photo = db.Column(db.String(255), nullable=True)
     
@@ -258,19 +275,30 @@ class DebrisReport(db.Model):
     sighting_date = db.Column(db.DateTime, nullable=True)
     
     # Relationships
-    user = db.relationship('User', backref=db.backref('debris_reports', lazy='dynamic'))
-    river = db.relationship('River', backref=db.backref('debris_reports', lazy='dynamic'))
-    reviewer = db.relationship('Admin', backref=db.backref('reviewed_reports', lazy='dynamic'))
+    user = db.relationship('User', backref=db.backref('hotspot_reports', lazy='dynamic'))
+    river = db.relationship('River', backref=db.backref('reports', lazy='dynamic'))
+    # reviewer relationship is defined via backref in models.Admin
     
     def to_dict(self):
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'user_name': self.user.ngo_name if self.user else None,
+            'user_name': self.user.ngo_name if self.user else 'Unknown',
+            'user_type': 'ngo' if self.user_id else 'unknown',
             'river_id': self.river_id,
             'river_name': self.river.name if self.river else None,
             'debris_type': self.debris_type,
             'estimated_amount': self.estimated_amount,
+            'plastic_amount': self.plastic_amount,
+            'organic_amount': self.organic_amount,
+            'household_amount': self.household_amount,
+            'industrial_amount': self.industrial_amount,
+            'others_amount': self.others_amount,
+            'snapshot_rainfall': self.snapshot_rainfall,
+            'snapshot_wind_speed': self.snapshot_wind_speed,
+            'snapshot_tide_level': self.snapshot_tide_level,
+            'snapshot_water_flow': self.snapshot_water_flow,
+            'snapshot_estimated_payload': self.snapshot_estimated_payload,
             'description': self.description,
             'photo': self.photo,
             'latitude': self.latitude,
@@ -278,7 +306,8 @@ class DebrisReport(db.Model):
             'status': self.status,
             'admin_notes': self.admin_notes,
             'reported_at': self.reported_at.strftime('%Y-%m-%d %H:%M') if self.reported_at else None,
-            'sighting_date': self.sighting_date.strftime('%Y-%m-%d') if self.sighting_date else None
+            'sighting_date': self.sighting_date.strftime('%Y-%m-%d') if self.sighting_date else None,
+            'reviewed_at': self.reviewed_at.strftime('%Y-%m-%d') if self.reviewed_at else None
         }
     
     def __repr__(self):

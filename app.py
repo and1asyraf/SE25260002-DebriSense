@@ -36,7 +36,7 @@ WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY', '84b6782ee30a4551acc83954252
 WEATHER_API_URL = 'http://api.weatherapi.com/v1/current.json'
 
 # Initialize extensions
-from models import db, User, Admin, River, DRIReading, DebrisReport, Watchlist, LocationRequest, Alert
+from models import db, User, Admin, River, DRIReading, HotspotReport, Watchlist, LocationRequest, Alert
 db.init_app(app)
 
 # Initialize Flask-Login
@@ -48,7 +48,7 @@ login_manager.login_message_category = 'info'
 
 @login_manager.user_loader
 def load_user(user_id):
-    """Load user by ID - handles both Admin and NGO users"""
+    """Load user by ID - handles Admin, NGO, and Regular users"""
     if user_id.startswith('admin_'):
         admin_id = int(user_id.replace('admin_', ''))
         return Admin.query.get(admin_id)
@@ -87,6 +87,8 @@ def ngo_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+
 # Create database tables and default admin
 with app.app_context():
     # Create tables if they don't exist
@@ -103,14 +105,14 @@ with app.app_context():
             admin.set_password('123456')
             db.session.add(admin)
             db.session.commit()
-            print("✓ Default admin created: admin@debrisense.my / 123456")
+            print("[OK] Default admin created: admin@debrisense.my / 123456")
         else:
-            print("✓ Admin account exists")
+            print("[OK] Admin account exists")
     except Exception as e: 
         print(f"Admin creation error: {e}")
         db.session.rollback()
     
-    print("✓ Database ready!")
+    print("[OK] Database ready!")
 
 # ============================================
 # Helper Functions
@@ -263,6 +265,9 @@ def ngo_logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('index'))
 
+
+
+
 # ============================================
 # NGO Dashboard Routes
 # ============================================
@@ -278,7 +283,7 @@ def ngo_dashboard():
 @ngo_required
 def ngo_profile():
     """NGO Profile page"""
-    return render_template('profile.html', user=current_user, rivers=[])
+    return render_template('ngo_profile.html', user=current_user, rivers=[])
 
 @app.route('/ngo/profile/update', methods=['POST'])
 @ngo_required
@@ -371,6 +376,105 @@ def admin_dashboard():
 # ============================================
 # API Routes
 # ============================================
+
+# ----------------------------
+# Frontend auth status (for gating UI)
+# ----------------------------
+@app.route('/api/auth/session')
+def auth_session():
+    """Return whether the current user is logged in (and their role)."""
+    if not current_user.is_authenticated:
+        return jsonify({'authenticated': False, 'role': None})
+
+    if isinstance(current_user, Admin):
+        return jsonify({'authenticated': True, 'role': 'admin'})
+
+    if isinstance(current_user, User):
+        return jsonify({'authenticated': True, 'role': 'ngo'})
+
+
+
+    # Fallback (should not normally happen)
+    return jsonify({'authenticated': True, 'role': 'unknown'})
+
+
+def generate_mock_reports_for_river(river):
+    """Generate deterministic mock debris reports for a river."""
+    import hashlib
+    import random
+    from datetime import timedelta
+
+    seed_input = f"{river.id}-{river.name}"
+    seed_hex = hashlib.md5(seed_input.encode("utf-8")).hexdigest()[:8]
+    seed = int(seed_hex, 16)
+    rng = random.Random(seed)
+
+    debris_types = ['plastic', 'organic', 'household', 'industrial', 'others']
+    estimated_amounts = ['small', 'medium', 'large', 'massive']
+    statuses = ['pending', 'reviewed', 'resolved']
+
+    now = datetime.utcnow()
+
+    reports = []
+    for i in range(3):
+        dt = now - timedelta(days=rng.randint(1, 45), hours=rng.randint(0, 23))
+
+        # Add a small offset so mock reports are not all at the exact same pin
+        lat_offset = rng.uniform(-0.02, 0.02)
+        lon_offset = rng.uniform(-0.02, 0.02)
+
+        reports.append({
+            'id': i + 1,  # mock id (not a real DB id)
+            'user_id': None,
+            'user_name': None,
+            'river_id': river.id,
+            'river_name': river.name,
+            'debris_type': rng.choice(debris_types),
+            'estimated_amount': rng.choice(estimated_amounts),
+            'description': f"Mock report {i + 1} for {river.name}.",
+            'photo': None,
+            'latitude': float(river.latitude) + lat_offset,
+            'longitude': float(river.longitude) + lon_offset,
+            'status': rng.choice(statuses),
+            'admin_notes': None,
+            'reported_at': dt.strftime('%Y-%m-%d %H:%M'),
+            'sighting_date': dt.strftime('%Y-%m-%d'),
+        })
+
+    return reports
+
+
+@app.route('/api/river/<int:river_id>/reports', methods=['GET'])
+def get_river_reports(river_id):
+    """
+    Get reports connected to a river.
+    - If DB has real reports: return them.
+    - Otherwise: return deterministic mock reports.
+    - Requires NGO/Admin login.
+    """
+    if (not current_user.is_authenticated) or (not isinstance(current_user, (Admin, User))):
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+
+    river = River.query.get(river_id)
+    if not river:
+        return jsonify({'success': False, 'error': 'River not found'}), 404
+
+    # Prefer real reports if they exist in DB
+    reports = HotspotReport.query.filter_by(river_id=river_id).order_by(HotspotReport.reported_at.desc()).all()
+    if reports:
+        return jsonify({
+            'success': True,
+            'reports': [r.to_dict() for r in reports],
+            'total': len(reports),
+        })
+
+    # Fallback to mock reports
+    mock_reports = generate_mock_reports_for_river(river)
+    return jsonify({
+        'success': True,
+        'reports': mock_reports,
+        'total': len(mock_reports),
+    })
 
 @app.route('/api/rivers')
 def get_rivers():
@@ -489,14 +593,51 @@ def calculate_dri(river, weather_data):
         risk_level = "Critical"
         risk_color = "#dc3545"
     
-    debris_amount = (dri_score / 70) * 11600
+    theoretical_debris_amount = (dri_score / 70) * 11600
+    
+    # Knowledge Engineering: Fetch past reports for this river to calculate multipliers
+    from models import HotspotReport
+    from flask import current_app
+    
+    river_id = river.get('id') if isinstance(river, dict) else river.id
+    
+    learning_multiplier = 1.0
+    empirical_profile = None
+    
+    try:
+        if current_app:
+            reports = HotspotReport.query.filter_by(river_id=river_id, status='resolved').all()
+            if reports:
+                # 1. Calculate learning multiplier for total payload
+                total_predicted = sum(r.snapshot_estimated_payload for r in reports if r.snapshot_estimated_payload)
+                total_actual = sum((r.plastic_amount or 0) + (r.organic_amount or 0) + (r.household_amount or 0) + 
+                                   (r.industrial_amount or 0) + (r.others_amount or 0) for r in reports)
+                
+                if total_predicted > 0:
+                    learning_multiplier = total_actual / total_predicted
+                    
+                # 2. Calculate empirical debris profile
+                if total_actual > 0:
+                    empirical_profile = {
+                        'plastic': ((sum(r.plastic_amount or 0 for r in reports)) / total_actual) * 100,
+                        'organic': ((sum(r.organic_amount or 0 for r in reports)) / total_actual) * 100,
+                        'household': ((sum(r.household_amount or 0 for r in reports)) / total_actual) * 100,
+                        'industrial': ((sum(r.industrial_amount or 0 for r in reports)) / total_actual) * 100,
+                        'others': ((sum(r.others_amount or 0 for r in reports)) / total_actual) * 100
+                    }
+    except Exception:
+        pass
+
+    debris_amount = theoretical_debris_amount * learning_multiplier
     
     # Get debris profile from river data
     debris_profile = river.get('debris_profile') if isinstance(river, dict) else None
     land_use = river.get('land_use', 'urban') if isinstance(river, dict) else 'urban'
     
-    # If no debris_profile in river data, generate based on land_use
-    if not debris_profile:
+    # Prioritize the empirically learned profile
+    if empirical_profile:
+        debris_profile = empirical_profile
+    elif not debris_profile:
         profiles = {
             'urban': {'plastic': 55, 'organic': 20, 'household': 15, 'industrial': 5, 'others': 5},
             'industrial': {'plastic': 35, 'organic': 10, 'household': 10, 'industrial': 35, 'others': 10},
@@ -845,7 +986,7 @@ def update_admin_profile():
 @app.route('/admin/users')
 @admin_required
 def admin_users():
-    """Admin page to manage NGO users"""
+    """Admin page to manage all users"""
     users = User.query.all()
     return render_template('admin_users.html', users=users, admin=current_user)
 
@@ -886,12 +1027,39 @@ def clear_rivers():
 # NGO API - Debris Reports
 # ============================================
 
+@app.route('/api/reports/all', methods=['GET'])
+def get_all_reports_for_hotspots():
+    """Get all debris reports (real and mock) for the Hotspot Reports dashboard"""
+    if not current_user.is_authenticated:
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+
+    try:
+        rivers = River.query.all()
+        all_reports = []
+        
+        for river in rivers:
+            reports = HotspotReport.query.filter_by(river_id=river.id).order_by(HotspotReport.reported_at.desc()).all()
+            if reports:
+                all_reports.extend([r.to_dict() for r in reports])
+            else:
+                all_reports.extend(generate_mock_reports_for_river(river))
+                
+        all_reports.sort(key=lambda x: x.get('reported_at', ''), reverse=True)
+                
+        return jsonify({
+            'success': True,
+            'reports': all_reports,
+            'total': len(all_reports)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.route('/api/ngo/reports', methods=['GET'])
 @ngo_required
 def get_my_reports():
     """Get all debris reports by current NGO user"""
     try:
-        reports = DebrisReport.query.filter_by(user_id=current_user.id).order_by(DebrisReport.reported_at.desc()).all()
+        reports = HotspotReport.query.filter_by(user_id=current_user.id).order_by(HotspotReport.reported_at.desc()).all()
         return jsonify({
             'success': True,
             'reports': [r.to_dict() for r in reports],
@@ -902,13 +1070,24 @@ def get_my_reports():
 
 @app.route('/api/ngo/reports/submit', methods=['POST'])
 @ngo_required
-def submit_debris_report():
-    """Submit a new debris sighting report"""
+def submit_hotspot_report():
+    """Submit a new debris sighting report with exact measurements"""
     try:
+        # Helper to parse floats safely
+        def safe_float(val):
+            try:
+                return float(val) if val else 0.0
+            except ValueError:
+                return 0.0
+
         if request.content_type and 'multipart/form-data' in request.content_type:
             river_id = int(request.form.get('river_id'))
-            debris_type = request.form.get('debris_type')
-            estimated_amount = request.form.get('estimated_amount')
+            plastic_amount = safe_float(request.form.get('plastic_amount'))
+            organic_amount = safe_float(request.form.get('organic_amount'))
+            household_amount = safe_float(request.form.get('household_amount'))
+            industrial_amount = safe_float(request.form.get('industrial_amount'))
+            others_amount = safe_float(request.form.get('others_amount'))
+            
             description = request.form.get('description', '')
             latitude = request.form.get('latitude')
             longitude = request.form.get('longitude')
@@ -928,19 +1107,66 @@ def submit_debris_report():
         else:
             data = request.get_json()
             river_id = int(data.get('river_id'))
-            debris_type = data.get('debris_type')
-            estimated_amount = data.get('estimated_amount')
+            plastic_amount = safe_float(data.get('plastic_amount'))
+            organic_amount = safe_float(data.get('organic_amount'))
+            household_amount = safe_float(data.get('household_amount'))
+            industrial_amount = safe_float(data.get('industrial_amount'))
+            others_amount = safe_float(data.get('others_amount'))
+            
             description = data.get('description', '')
             latitude = data.get('latitude')
             longitude = data.get('longitude')
             sighting_date = data.get('sighting_date')
             photo_filename = None
+            
+        # Calculate total and primary type
+        amounts = {
+            'plastic': plastic_amount,
+            'organic': organic_amount,
+            'household': household_amount,
+            'industrial': industrial_amount,
+            'others': others_amount
+        }
+        total_amount_kg = sum(amounts.values())
         
-        report = DebrisReport(
+        # Determine primary debris_type (category with highest weight)
+        primary_type = max(amounts.items(), key=lambda x: x[1])[0]
+        if total_amount_kg == 0:
+            primary_type = 'mixed'
+            
+        # Determine estimated_amount (legacy category)
+        if total_amount_kg < 10:
+            estimated_category = 'small'
+        elif total_amount_kg <= 50:
+            estimated_category = 'medium'
+        elif total_amount_kg <= 200:
+            estimated_category = 'large'
+        else:
+            estimated_category = 'massive'
+            
+        # Snapshot the latest DRI reading (Raw API Inputs at the time)
+        latest_reading = DRIReading.query.filter_by(river_id=river_id).order_by(DRIReading.recorded_at.desc()).first()
+        snapshot_rainfall = latest_reading.rainfall if latest_reading else None
+        snapshot_wind_speed = latest_reading.wind_speed if latest_reading else None
+        snapshot_tide_level = latest_reading.tide_level if latest_reading else None
+        snapshot_water_flow = latest_reading.water_flow if latest_reading else None
+        snapshot_estimated_payload = latest_reading.estimated_debris_kg if latest_reading else None
+        
+        report = HotspotReport(
             user_id=current_user.id,
             river_id=river_id,
-            debris_type=debris_type,
-            estimated_amount=estimated_amount,
+            debris_type=primary_type,
+            estimated_amount=estimated_category,
+            plastic_amount=plastic_amount,
+            organic_amount=organic_amount,
+            household_amount=household_amount,
+            industrial_amount=industrial_amount,
+            others_amount=others_amount,
+            snapshot_rainfall=snapshot_rainfall,
+            snapshot_wind_speed=snapshot_wind_speed,
+            snapshot_tide_level=snapshot_tide_level,
+            snapshot_water_flow=snapshot_water_flow,
+            snapshot_estimated_payload=snapshot_estimated_payload,
             description=description,
             photo=photo_filename,
             latitude=float(latitude) if latitude else None,
@@ -950,8 +1176,90 @@ def submit_debris_report():
         db.session.add(report)
         db.session.commit()
         
+        # Generate Alerts for NGO Watchlist users
+        ngo_watchers = Watchlist.query.filter_by(river_id=river_id).all()
+        for w in ngo_watchers:
+            if w.user_id != current_user.id:
+                alert = Alert(
+                    user_id=w.user_id,
+                    alert_type='new_report',
+                    title='New Hotspot Report',
+                    message=f'A new {debris_type} hotspot report was submitted for {report.river.name}.',
+                    river_id=river_id,
+                    report_id=report.id
+                )
+                db.session.add(alert)
+                
+        # Generate Alerts for Regular Watchlist users
+        regular_watchers = RegularWatchlist.query.filter_by(river_id=river_id).all()
+        for rw in regular_watchers:
+            ralert = RegularAlert(
+                regular_user_id=rw.regular_user_id,
+                alert_type='new_report',
+                title='New Hotspot Report',
+                message=f'A new {debris_type} hotspot report was submitted for {report.river.name}.',
+                river_id=river_id
+            )
+            db.session.add(ralert)
+            
+        db.session.commit()
+        
         return jsonify({'success': True, 'report': report.to_dict()})
         
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/admin/reports/<int:report_id>/delete', methods=['POST'])
+@admin_required
+def delete_hotspot_report(report_id):
+    """Admin route to hard delete a report"""
+    try:
+        report = HotspotReport.query.get_or_404(report_id)
+        db.session.delete(report)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Report permanently deleted'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/admin/reports/add', methods=['POST'])
+@admin_required
+def admin_add_hotspot_report():
+    """Admin route to manually inject a report"""
+    try:
+        data = request.form
+        river_id = data.get('river_id')
+        debris_type = data.get('debris_type', 'mixed')
+        estimated_amount = data.get('estimated_amount', 'medium')
+        description = data.get('description', '')
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        
+        photo_filename = None
+        if 'photo' in request.files:
+            file = request.files['photo']
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                # Extract secure_filename module or reuse if imported
+                photo_filename = filename
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+
+        new_report = HotspotReport(
+            river_id=river_id,
+            latitude=latitude,
+            longitude=longitude,
+            debris_type=debris_type,
+            estimated_amount=estimated_amount,
+            description=description,
+            photo_url=photo_filename,
+            status='reviewed'  # auto-reviewed since admin made it
+        )
+        db.session.add(new_report)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Manual report matrix generated'})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -1290,7 +1598,7 @@ def mark_alerts_read():
 @admin_required
 def admin_reports():
     """Admin page to review debris reports"""
-    reports = DebrisReport.query.order_by(DebrisReport.reported_at.desc()).all()
+    reports = HotspotReport.query.order_by(HotspotReport.reported_at.desc()).all()
     return render_template('admin_reports.html', reports=reports, admin=current_user)
 
 @app.route('/admin/hotspot-reports')
@@ -1318,11 +1626,11 @@ def get_all_reports():
     """Get all debris reports (admin)"""
     try:
         status_filter = request.args.get('status')
-        query = DebrisReport.query
+        query = HotspotReport.query
         if status_filter:
             query = query.filter_by(status=status_filter)
         
-        reports = query.order_by(DebrisReport.reported_at.desc()).all()
+        reports = query.order_by(HotspotReport.reported_at.desc()).all()
         return jsonify({
             'success': True,
             'reports': [r.to_dict() for r in reports],
@@ -1336,7 +1644,7 @@ def get_all_reports():
 def review_report(report_id):
     """Review a debris report"""
     try:
-        report = DebrisReport.query.get(report_id)
+        report = HotspotReport.query.get(report_id)
         if not report:
             return jsonify({'success': False, 'error': 'Report not found'}), 404
         
@@ -1441,6 +1749,58 @@ def review_location_request(request_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+
+
+# ============================================
+# AI Chatbot API
+# ============================================
+
+import google.generativeai as genai
+
+@app.route('/api/chatbot/message', methods=['POST'])
+def chatbot_message():
+    try:
+        data = request.get_json()
+        user_message = data.get('message', '')
+        user_role = data.get('role', 'Public')
+        
+        if not user_message:
+            return jsonify({'success': False, 'error': 'Empty message'}), 400
+            
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            return jsonify({'success': False, 'error': 'Gemini API key not configured in .env'}), 500
+            
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        
+        prompt = f'''
+        You are DebriSense Assistant, an AI expert for the DebriSense river debris monitoring platform in Malaysia.
+        The user you are speaking to has the role: {user_role}.
+        
+        Platform Features:
+        - DRI (Debris Risk Index): 0-100 score predicting river debris risk.
+        - NGO Users: Submit Hotspot Reports, request monitoring locations, manage Watchlists, export CSV data.
+        - Public Users: View map of rivers.
+        - Admin Users: Manage rivers, approve/reject reports, manage NGO access, view advanced Hotspot Analysis.
+        
+        Formatting Rules:
+        - Provide answers as purely formatted HTML (using <br>, <strong>, <em>, <ul>, <li>) so it renders correctly in the chat widget. Do NOT use markdown.
+        - Keep answers concise (1-3 short paragraphs).
+        - Directly directly address the user's question, taking their assigned Role into account.
+        
+        User Message: {user_message}
+        '''
+        
+        response = model.generate_content(prompt)
+        
+        return jsonify({'success': True, 'response': response.text})
+    except Exception as e:
+        print(f"Chatbot Error: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 
 # ============================================
 # Utility Routes

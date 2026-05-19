@@ -116,39 +116,80 @@ html, body {
     width: 100%;
     height: calc(100% - 70px);
     z-index: 1;
-    transition: width 0.3s ease;
+    transition: height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-#map.sidebar-open {
-    width: calc(100% - 420px);
+#map.bottom-sheet-open {
+    height: 50vh;
+    width: 100%;
 }
 
 /* River Sidebar */
-.river-sidebar {
+.bottom-sheet {
     position: fixed;
-    top: 70px;
-    right: -420px;
-    width: 400px;
-    height: calc(100% - 70px);
+    top: auto;
+    bottom: -50vh;
+    left: 0;
+    width: 100%;
+    height: 50vh;
     background: white;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
     z-index: 1001;
-    transition: right 0.3s ease;
+    transition: bottom 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     overflow-y: auto;
+    overscroll-behavior-y: contain;
 }
 
-.river-sidebar.active {
-    right: 0;
+.bottom-sheet.dragging {
+    transition: none !important;
+}
+
+.bottom-sheet.expanded {
+    height: calc(100vh - 70px);
+}
+
+.sheet-drag-area {
+    width: 100%;
+    padding: 12px 0 0 0;
+    cursor: grab;
+    display: flex;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 11;
+    border-radius: 24px 24px 0 0;
+}
+
+.sheet-drag-area:active {
+    cursor: grabbing;
+}
+
+.sheet-drag-handle {
+    width: 40px;
+    height: 5px;
+    background: #ced4da;
+    border-radius: 3px;
+    transition: background 0.2s;
+}
+
+.sheet-drag-area:hover .sheet-drag-handle {
+    background: #adb5bd;
+}
+
+.bottom-sheet.active {
+    bottom: 0;
 }
 
 .sidebar-header {
-    padding: 25px 20px;
+    padding: 15px 20px 20px 20px;
     border-bottom: 2px solid #f0f0f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: sticky;
-    top: 0;
+    top: 17px;
     background: white;
     z-index: 10;
 }
@@ -221,8 +262,10 @@ html, body {
 
 .river-image {
     width: 100%;
-    height: 180px;
-    object-fit: cover;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    background: #f8f9fa;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease;
@@ -410,15 +453,14 @@ html, body {
     }
     
     /* Mobile Sidebar */
-    .river-sidebar {
-        top: 60px;
-        right: -100%;
+    .bottom-sheet {
+        bottom: -50vh;
         width: 100%;
-        height: calc(100% - 60px);
+        height: 50vh;
     }
     
-    .river-sidebar.active {
-        right: 0;
+    .bottom-sheet.active {
+        bottom: 0;
     }
     
     /* Make zoom controls larger for touch */

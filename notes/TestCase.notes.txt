@@ -1,0 +1,322 @@
+Unit Testing (UT)
+Integration Testing (IT)
+System Testing (ST)
+
+Example of Test Case Template: 
+Test Case ID: UT001
+Test Case Name: Login User 
+Description: This test case verifies whether the system allows users to log in with valid credentials, ensures authentication and directs to the dashboard page.
+ID: UT001-TC-01
+Test Input: User inputs valid email and password. User clicks on “Login” button.
+Expected Result: User is logged into the application and directed to the dashboard page.
+Pass Criteria: User is logged into the application and directed to the dashboard page
+Fail Criteria: User is not logged into the application.
+ID: UT001-TC-02
+Test Input: User inputs unregistered email. User clicks on “Login” button.
+Expected Result: Error message of unregistered email is displayed. User is unable to log into the application
+Pass Criteria: Error message of unregistered email is displayed. User is unable to log into the application.
+Fail Criteria: Error message of unregistered email is not displayed. User is logged into the application
+ID: UT001-TC-03
+Test Input: User inputs invalid password. User clicks on “Login” button.
+Expected Result: Error message of wrong email and password combination is displayed. User is unable to log in.
+Pass Criteria: Error message of wrong email and password combination is displayed. User is unable to log in.
+Fail Criteria: Error message of wrong email and password combination is not displayed. User is logged into the application
+
+Test Case ID: UT002
+Test Case Name: Register User
+Description: Verifies that a new NGO can register successfully and handles invalid inputs appropriately.
+ID: UT002-TC-01
+Test Input: User inputs valid registration details (name, valid email, strong password). User clicks “Register”.
+Expected Result: Account is created successfully in the database, user is directed to login page with success message.
+Pass Criteria: Account is created, user is directed to login page.
+Fail Criteria: Account is not created.
+ID: UT002-TC-02
+Test Input: User inputs an already registered email. User clicks “Register”.
+Expected Result: Error message indicating email is already in use is displayed. Account creation fails.
+Pass Criteria: Error message is displayed, registration halted.
+Fail Criteria: Error message is not displayed, system crashes or proceeds.
+ID: UT002-TC-03
+Test Input: User inputs passwords that do not match in the "Password" and "Confirm Password" fields.
+Expected Result: Form validation error is displayed indicating passwords must match.
+Pass Criteria: Form validation error is displayed, registration halted.
+Fail Criteria: Error is not displayed, registration proceeds.
+
+Test Case ID: UT003
+Test Case Name: Update Profile
+Description: Verifies that an authenticated user can update their profile information and handles edge cases.
+ID: UT003-TC-01
+Test Input: User modifies profile fields with valid data and clicks “Save Changes”.
+Expected Result: Profile information is updated in the database, success toast message shown.
+Pass Criteria: Updated details are visible on profile reload.
+Fail Criteria: Details remain unchanged or error occurs.
+ID: UT003-TC-02
+Test Input: User clears a required field (e.g., NGO Name) and clicks “Save Changes”.
+Expected Result: Form validation error prompts user to fill out the required field.
+Pass Criteria: Error message displayed, form does not submit.
+Fail Criteria: Form submits with empty required fields.
+
+Test Case ID: UT004
+Test Case Name: Logout User
+Description: Verifies that an active session is terminated when logging out and restricts access to protected pages.
+ID: UT004-TC-01
+Test Input: User clicks “Logout” from the user dropdown menu.
+Expected Result: Session is invalidated, user is redirected to the home page.
+Pass Criteria: Session is invalidated, redirect successful.
+Fail Criteria: User remains logged in.
+ID: UT004-TC-02
+Test Input: Logged-out user attempts to access the dashboard URL directly via browser address bar.
+Expected Result: User is denied access and redirected to the login page.
+Pass Criteria: Redirection to login page occurs.
+Fail Criteria: User gains access to dashboard.
+
+Test Case ID: UT005
+Test Case Name: View Map
+Description: Verifies that the interactive map renders correctly and filters active river hotspots.
+ID: UT005-TC-01
+Test Input: User navigates to the public map page.
+Expected Result: Map initializes and displays markers for all active rivers.
+Pass Criteria: Map and markers are visible.
+Fail Criteria: Map fails to load or markers are missing.
+ID: UT005-TC-02
+Test Input: Logged-in user toggles "Show Watchlist Only" checkbox to active.
+Expected Result: Map updates to hide non-watchlist markers, showing only user's watched rivers.
+Pass Criteria: Only watchlist markers remain visible on the map.
+Fail Criteria: Map fails to filter or shows incorrect markers.
+ID: UT005-TC-03
+Test Input: User toggles "Show Watchlist Only" checkbox to inactive.
+Expected Result: Map restores all active river markers.
+Pass Criteria: All active river markers become visible.
+Fail Criteria: Markers do not restore.
+
+Test Case ID: UT006
+Test Case Name: View Hotspot Details
+Description: Verifies that clicking a map marker displays the correct river data sidebar.
+ID: UT006-TC-01
+Test Input: User clicks a river marker on the map.
+Expected Result: Sidebar opens populated with specific river details, coordinates, and DRI predictions.
+Pass Criteria: Sidebar opens with correct contextual data.
+Fail Criteria: Sidebar fails to open or displays incorrect data.
+ID: UT006-TC-02
+Test Input: User clicks the close button 'X' on the opened sidebar.
+Expected Result: Sidebar closes, and the map resizes to fill the screen smoothly.
+Pass Criteria: Sidebar hides completely.
+Fail Criteria: Sidebar remains visible or map layout breaks.
+
+Test Case ID: UT007
+Test Case Name: Submit Hotspot Report
+Description: Verifies that an NGO can submit empirical cleanup data safely.
+ID: UT007-TC-01
+Test Input: User fills out cleanup report form with all valid fields (date, payload, breakdown) and clicks “Submit”.
+Expected Result: Report is saved to database, success toast is displayed, and form resets.
+Pass Criteria: Report is saved, success toast appears.
+Fail Criteria: Form submission fails without saving.
+ID: UT007-TC-02
+Test Input: User submits the form leaving the required "Total Payload" field empty.
+Expected Result: Browser validation blocks submission, prompting the user to fill the field.
+Pass Criteria: Form does not submit, validation message shows.
+Fail Criteria: Form submits with empty payload.
+
+Test Case ID: UT008
+Test Case Name: Request New Hotspot
+Description: Verifies that users can request administrators to add a new monitoring location.
+ID: UT008-TC-01
+Test Input: User inputs valid new latitude, longitude, and reason, then clicks “Submit Request”.
+Expected Result: Request is saved as pending and confirmation message appears.
+Pass Criteria: Pending request is visible in database/admin panel.
+Fail Criteria: Request is lost or error occurs.
+ID: UT008-TC-02
+Test Input: User inputs invalid characters in latitude/longitude fields and clicks “Submit Request”.
+Expected Result: Form validation rejects input, requesting valid float numbers.
+Pass Criteria: Form blocked from submitting.
+Fail Criteria: Form submits invalid coordinate strings to backend.
+
+Test Case ID: UT009
+Test Case Name: Display Prediction Insights
+Description: Verifies that the debris prediction charts render correctly on the frontend.
+ID: UT009-TC-01
+Test Input: User clicks a marker with valid DRI data to open the hotspot details sidebar.
+Expected Result: Doughnut chart renders showing exact debris breakdown percentages and payload in 2 decimal places.
+Pass Criteria: Chart renders without JS errors and reflects correct values.
+Fail Criteria: Chart is blank or shows NaN.
+ID: UT009-TC-02
+Test Input: User clicks a marker for a river with zero calculated payload.
+Expected Result: Chart renders gracefully with "N/A" or zero values without throwing division by zero errors.
+Pass Criteria: Chart handles zero values safely.
+Fail Criteria: Chart throws JS errors or NaN.
+
+Test Case ID: UT010
+Test Case Name: Download Report
+Description: Verifies that users can export historical hotspot data to CSV.
+ID: UT010-TC-01
+Test Input: User clicks “Download CSV” on a historical report entry.
+Expected Result: A valid CSV file begins downloading containing correct tabular data for that report.
+Pass Criteria: File downloads with correct data format.
+Fail Criteria: Download fails or file is corrupted.
+ID: UT010-TC-02
+Test Input: User clicks "Export All Data" (if applicable) for a river with no historical records.
+Expected Result: System alerts user that no data is available to export.
+Pass Criteria: Alert is shown, no empty file is downloaded.
+Fail Criteria: Empty/corrupted file is downloaded.
+
+Test Case ID: UT011
+Test Case Name: Add Hotspot to Watchlist
+Description: Verifies the functionality to toggle a river on or off the user's watchlist.
+ID: UT011-TC-01
+Test Input: User clicks “Add to Watchlist” button in the sidebar.
+Expected Result: Button state changes to "Remove", and river is added to user's tracked database.
+Pass Criteria: Database updates, button UI updates dynamically.
+Fail Criteria: Database fails to update or UI remains unchanged.
+ID: UT011-TC-02
+Test Input: User clicks “Remove from Watchlist” button.
+Expected Result: Button state reverts to "Add", and river is deleted from user's watchlist in database.
+Pass Criteria: Database updates, button UI updates dynamically.
+Fail Criteria: River remains in watchlist.
+
+Test Case ID: UT012
+Test Case Name: Receive Alerts
+Description: Verifies that system-generated alerts appear in the user’s dashboard.
+ID: UT012-TC-01
+Test Input: System generates an alert; User clicks on the notification bell icon.
+Expected Result: Dropdown opens displaying unread alerts for watched rivers, badge shows correct count.
+Pass Criteria: Alerts are listed and badge count is accurate.
+Fail Criteria: Alerts do not appear.
+ID: UT012-TC-02
+Test Input: User clicks "Mark All as Read" in the alert dropdown.
+Expected Result: All alerts are marked read in database, badge disappears.
+Pass Criteria: Badge disappears, alerts change visual style to 'read'.
+Fail Criteria: Alerts remain unread.
+
+Test Case ID: UT013
+Test Case Name: DRI Calculation
+Description: Verifies backend logic calculates the Debris Risk Index correctly under different weather conditions.
+ID: UT013-TC-01
+Test Input: System processes extreme weather API parameters (high rain, strong flow).
+Expected Result: Backend calculates DRI value correctly, resulting in "Critical" risk level.
+Pass Criteria: Risk level outputs as "Critical".
+Fail Criteria: Risk level remains Low despite extreme inputs.
+ID: UT013-TC-02
+Test Input: System processes normal/calm weather API parameters.
+Expected Result: Backend calculates DRI value resulting in "Low" risk level.
+Pass Criteria: Risk level outputs as "Low".
+Fail Criteria: Risk level outputs as High/Critical improperly.
+
+Test Case ID: UT014
+Test Case Name: Predict Debris Accumulation
+Description: Verifies the debris payload multiplier applied to river baselines.
+ID: UT014-TC-01
+Test Input: System calculates payload utilizing a high DRI multiplier against urban land-use baseline.
+Expected Result: Total estimated payload (kg) is calculated accurately and amplified correctly.
+Pass Criteria: Total payload is mathematically accurate based on formula.
+Fail Criteria: Payload yields NaN or zero incorrectly.
+ID: UT014-TC-02
+Test Input: System encounters missing baseline data for a river during calculation.
+Expected Result: System falls back to default fallback values to ensure a non-breaking calculation.
+Pass Criteria: Payload calculates using fallback logic.
+Fail Criteria: System crashes with null reference error.
+
+Test Case ID: UT015
+Test Case Name: Interactive Chatbot
+Description: Verifies AI chatbot can receive prompts, handle errors, and return contextual answers.
+ID: UT015-TC-01
+Test Input: User types a valid question about debris management and clicks “Send”.
+Expected Result: Query is sent to AI API, relevant markdown response is rendered in chat window.
+Pass Criteria: Relevant, formatted response is displayed to the user.
+Fail Criteria: Empty response or unformatted raw JSON shown.
+ID: UT015-TC-02
+Test Input: User attempts to send an empty message.
+Expected Result: The send action is blocked, no API call is made.
+Pass Criteria: No blank messages appear in chat history.
+Fail Criteria: Blank message is sent and API errors out.
+
+Test Case ID: UT016
+Test Case Name: Admin Manage Hotspots
+Description: Verifies admin ability to approve or reject pending location requests.
+ID: UT016-TC-01
+Test Input: Admin clicks “Approve” on a pending location request.
+Expected Result: Request status changes to Approved, new River is instantiated in DB.
+Pass Criteria: River appears on the public map globally.
+Fail Criteria: Status does not change or river is not created.
+ID: UT016-TC-02
+Test Input: Admin clicks "Reject" on a pending location request.
+Expected Result: Request status changes to Rejected, no River is created.
+Pass Criteria: Request marked rejected, public map unchanged.
+Fail Criteria: River is mistakenly created anyway.
+
+Test Case ID: UT017
+Test Case Name: Admin Manage Accounts
+Description: Verifies admin ability to verify NGO user registrations.
+ID: UT017-TC-01
+Test Input: Admin toggles verification status for an unverified NGO user.
+Expected Result: User’s is_verified flag updates to True in the database.
+Pass Criteria: User gains access to verified NGO features immediately.
+Fail Criteria: Verification state does not persist.
+ID: UT017-TC-02
+Test Input: Admin toggles verification status for a verified NGO user (Revoke).
+Expected Result: User's is_verified flag updates to False.
+Pass Criteria: User loses access to verified NGO features.
+Fail Criteria: User retains verified privileges.
+
+Test Case ID: UT018
+Test Case Name: View Historical Reports
+Description: Verifies that users can read past empirical cleanup reports.
+ID: UT018-TC-01
+Test Input: User scrolls to historical section in hotspot details for a river with reports.
+Expected Result: List of past reports fetches and renders correctly with payload data.
+Pass Criteria: Reports display dates and payload summaries accurately.
+Fail Criteria: List fails to load data.
+ID: UT018-TC-02
+Test Input: User views historical section for a newly added river with no reports.
+Expected Result: System displays a friendly "No historical logs available yet" message.
+Pass Criteria: Empty state message displays correctly.
+Fail Criteria: Section shows loading spinner indefinitely or JS error.
+
+Test Case ID: UT019
+Test Case Name: Real-Time Data Update
+Description: Verifies frontend accurately fetches newest DRI data without hard reloads.
+ID: UT019-TC-01
+Test Input: System fires 'watchlistUpdated' event when user modifies watchlist.
+Expected Result: Map marker logic automatically refetches watchlist and filters markers instantly.
+Pass Criteria: UI reflects latest database state without hard refresh.
+Fail Criteria: UI caches old data, requiring manual page reload.
+
+Test Case ID: IT001
+Test Case Name: Backend to Database Integration
+Description: Verifies that data submitted through frontend API endpoints accurately persists in the relational database safely.
+ID: IT001-TC-01
+Test Scenario: Submit new Hotspot Report via API with all valid fields.
+Expected Result: Database HotspotReport table inserts a new row matching JSON inputs.
+Pass Criteria: ORM commit succeeds, queried data matches perfectly.
+Fail Criteria: Database throws integrity or constraint error.
+ID: IT001-TC-02
+Test Input: Submit Hotspot Report with an invalid River ID (foreign key violation).
+Expected Result: Database rejects the insert, backend catches error and returns HTTP 400/500 gracefully.
+Pass Criteria: Error handled gracefully, system does not crash.
+Fail Criteria: System crashes, exposing raw SQL traceback to client.
+
+Test Case ID: IT002
+Test Case Name: Weather API Integration
+Description: Verifies that the system can successfully fetch external weather data and handle failures.
+ID: IT002-TC-01
+Test Input: Trigger automated DRI update job for valid river coordinates.
+Expected Result: External API returns HTTP 200, JSON is parsed correctly into the DRI calculation function.
+Pass Criteria: Payload parsed without key errors, DRI is updated.
+Fail Criteria: API timeout crashes the job execution.
+ID: IT002-TC-02
+Test Input: Simulate an External API timeout or 503 Service Unavailable response.
+Expected Result: Backend catches exception, logs the error, and skips update without crashing the entire job loop.
+Pass Criteria: Loop continues for other rivers, system remains stable.
+Fail Criteria: Entire background scheduler halts.
+
+Test Case ID: IT003
+Test Case Name: AI Chatbot Integration
+Description: Verifies that user queries map correctly through the backend to the Gemini API and handle rate limits.
+ID: IT003-TC-01
+Test Input: Submit valid chat query via frontend.
+Expected Result: Backend securely sends context to Gemini and returns markdown string to frontend.
+Pass Criteria: Valid markdown response returned to client.
+Fail Criteria: API key rejection or malformed JSON returned.
+ID: IT003-TC-02
+Test Input: Simulate Gemini API rate limit / Quota exceeded response.
+Expected Result: Backend catches the error and returns a friendly "Service temporarily unavailable" message to user.
+Pass Criteria: User sees friendly error, backend does not crash.
+Fail Criteria: User sees raw API error or unhandled exception.

@@ -1,0 +1,41 @@
+# DebriSense Project Description
+
+## Overview
+DebriSense is a web-based dashboard designed to predict and monitor debris accumulation in Malaysian rivers. It operates using a Debris Risk Index (DRI) - a transparent, non-AI, rule-based weighted index system inspired by the Malaysia Department of Environment (DOE) Water Quality Index. 
+
+## Key Features
+
+1. **Role-Based Authentication**
+   - **Admins**: Manage the entire system including user accounts, river locations, debris reports, and new monitoring locations.
+   - **NGOs/Users**: Can register, authenticate, manage their profiles, report debris, request new monitoring locations, and keep a watchlist of rivers.
+
+2. **Debris Risk Index (DRI) Engine**
+   - Uses real-time weather integration (WeatherAPI) to factor in rainfall, wind speed, tide level, and water flow.
+   - Maps risk into five levels: Very Low, Low, Medium, High, and Critical.
+   - Applies land-use profiles (urban, industrial, rural, coastal, mixed) to estimate the distribution of debris types (plastics, organics, household, industrial).
+
+3. **Interactive Map & Dashboard**
+   - Integrates Leaflet.js with OpenStreetMap to display river monitoring locations.
+   - Displays real-time and historical DRI scores for supported locations.
+
+4. **Debris Sighting Reports**
+   - NGOs can submit on-the-ground debris reports including debris type, estimated volume, coordinates, descriptions, and photo evidence.
+   - Admins review, update statuses (pending, reviewed, resolved), and leave notes, triggering notifications back to the NGO.
+
+5. **Watchlist and Alert System**
+   - NGOs can add specific rivers to their watchlist.
+   - The system generates targeted alerts/notifications for NGOs when rivers hit High or Critical risk levels, or when admins respond to their reports and requests.
+
+6. **Location Requests**
+   - NGOs can request new river sites to be added to the system by providing coordinates, state, district, and land-use information.
+
+7. **Data Export**
+   - NGOs have the ability to export historical DRI readings to CSV format for local reporting and analysis.
+
+8. **Chatbot Integration**
+   - Features an interactive chatbot built into the frontend to guide users or provide contextual assistance.
+
+## Technology Stack
+- **Backend:** Python Flask, SQLAlchemy (supporting SQLite locally and PostgreSQL via Supabase)
+- **Frontend:** HTML5, CSS3, JavaScript, Leaflet.js maps
+- **Data Integrations:** WeatherAPI for real-time risk calculation

@@ -1,0 +1,14 @@
+1. Objective: To develop a real-time river monitoring system that updates hotspot debris status at defined intervals.
+
+Description: 
+This objective focuses on establishing the core geospatial and data-tracking infrastructure of the DebriSense platform. By integrating interactive map visualizations and seamless database synchronization, the system allows NGOs and administrators to monitor river conditions dynamically. Instead of relying on static or outdated manual records, the platform continuously fetches and renders the latest hotspot statuses. This provides field staff with an accurate, up-to-date geographical overview of debris accumulation across various river locations, which is critical for coordinating rapid, targeted cleanup logistics before severe environmental blockages occur.
+
+2. Objective: To develop a predictive Debris Risk Index (DRI) model that generates debris accumulation prediction at fixed time intervals and evaluates hotspot emergence with quantifiable accuracy metrics.
+
+Description: 
+This objective aims to transition river management from a reactive approach to a proactive, predictive methodology. By developing the Debris Risk Index (DRI), the system synthesizes real-time environmental variables—such as rainfall intensity, tide levels, wind speed, and water flow—against historical land-use baselines. The model not only forecasts the total volume of incoming debris but also estimates the categorical breakdown of waste types (e.g., plastic, organic, industrial). Through an empirical feedback loop (Adaptive Knowledge Engineering), the system continuously refines its predictive weights by evaluating its past estimates against actual ground-truth payload reports submitted by NGOs, thereby progressively improving its accuracy and reliability.
+
+3. Objective: To implement an interactive chatbot that provides instant guidance as well as context-aware answers, tailored to stakeholder’s needs.
+
+Description: 
+This objective is designed to enhance user experience, system accessibility, and operational efficiency through artificial intelligence. By integrating a Large Language Model (the Gemini API), the system features an intelligent, conversational assistant capable of understanding natural language queries. The chatbot acts as an on-demand knowledge base tailored for environmental stakeholders, assisting NGO staff and administrators with platform navigation, explaining complex DRI metrics, and advising on standard operating procedures for debris cleanup. By providing instant, context-aware responses, it significantly reduces the learning curve for new users and ensures that critical information is always accessible in the field.

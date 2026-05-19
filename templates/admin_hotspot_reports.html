@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotspot Reports - Admin | DebriSense</title>
-    
+
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
-    
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
     <!-- Google Fonts - Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_pages.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/report_management.css') }}">
 </head>
+
 <body class="admin-page">
     <!-- Top Navbar -->
     <nav class="navbar">
@@ -36,7 +37,7 @@
             </div>
         </div>
     </nav>
-    
+
     <!-- Main Content -->
     <div class="admin-content" style="overflow-y: auto; overflow-x: hidden;">
         <!-- Page Header -->
@@ -48,16 +49,18 @@
             <div class="hotspot-actions">
                 <button class="btn-export" onclick="showDownloadModal()">
                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M7 10L12 15M12 15L17 10M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path
+                            d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15M7 10L12 15M12 15L17 10M12 15V3"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Export All Reports
                 </button>
             </div>
         </div>
-        
+
         <!-- Statistics -->
         <div id="hotspot-stats-container"></div>
-        
+
         <!-- Filters -->
         <div class="hotspot-container">
             <div class="download-filter-section">
@@ -92,14 +95,16 @@
                         <input type="date" id="filter-date-to">
                     </div>
                 </div>
-                <div style="text-align: right; margin-top: 15px;">
-                    <button class="btn-secondary" onclick="clearFilters()">Clear Filters</button>
-                    <button class="btn-primary" onclick="applyFilters()">Apply Filters</button>
-                </div>
+                <div class="filter-actions">
+                <button class="btn-outline" onclick="clearFilters()">Reset Filters</button>
+                <button class="btn-glow" style="padding: 0.8rem 2rem; font-size: 0.95rem; margin-right: auto;" onclick="document.getElementById('add-report-modal').classList.add('active')">
+                    + Add Manual Matrix Entry
+                </button>
+                <button class="btn-glow" style="padding: 0.8rem 2rem; font-size: 0.95rem;" onclick="applyFilters()">Query Database</button>
             </div>
         </div>
-        
-        <!-- Reports Grid -->
+
+        <!-- Dynamic Reports Grid -->
         <div class="hotspot-container">
             <div id="reports-container">
                 <div class="loading-reports">
@@ -109,7 +114,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Download Modal -->
     <div class="report-modal" id="download-modal">
         <div class="report-modal-content" style="max-width: 600px;">
@@ -130,7 +135,7 @@
                             <div class="format-name">Excel</div>
                         </div>
                     </div>
-                    
+
                     <div class="download-filter-section" style="margin-top: 20px;">
                         <h4 style="margin-bottom: 15px;">Export Options</h4>
                         <div class="filter-group">
@@ -145,15 +150,61 @@
                                 Include photo URLs
                             </label>
                         </div>
-                        <div class="filter-group" style="margin-top: 10px;">
-                            <label>
-                                <input type="checkbox" id="export-admin-notes" checked style="margin-right: 8px;">
-                                Include admin notes
-                            </label>
-                        </div>
-                    </div>
+                        <div class="input-group" style="flex-direction: row; align-items: center;">
+                    <input type="checkbox" id="export-admin-notes" checked style="width: 18px; height: 18px; accent-color: var(--primary);">
+                    <label style="font-size: 1rem; color: white; text-transform: none; font-weight: 500;">Include confidental Admin Notes</label>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Add Report Modal -->
+    <div class="report-modal" id="add-report-modal">
+        <div class="report-modal-content">
+            <div class="report-modal-header">
+                <h2 style="font-size: 1.8rem;">Manual Entry Override</h2>
+                <button class="report-modal-close" onclick="document.getElementById('add-report-modal').classList.remove('active')">×</button>
+            </div>
+            
+            <form id="admin-add-report-form" onsubmit="submitAdminReport(event)">
+                <div class="input-group" style="margin-bottom: 1rem;">
+                    <label>River Target ID (Numeric)</label>
+                    <input type="number" id="manual-river-id" class="premium-input" required>
+                </div>
+                <div class="input-group" style="margin-bottom: 1rem;">
+                    <label>GPS Latitude</label>
+                    <input type="number" step="any" id="manual-lat" class="premium-input" required>
+                </div>
+                <div class="input-group" style="margin-bottom: 1rem;">
+                    <label>GPS Longitude</label>
+                    <input type="number" step="any" id="manual-lng" class="premium-input" required>
+                </div>
+                <div class="filter-grid" style="margin-bottom: 1rem;">
+                    <div class="input-group">
+                        <label>Debris Base</label>
+                        <select id="manual-type" class="premium-input">
+                            <option value="plastic">Plastic</option>
+                            <option value="organic">Organic</option>
+                            <option value="household">Household</option>
+                            <option value="industrial">Industrial</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Threat Level (Amount)</label>
+                        <select id="manual-amount" class="premium-input">
+                            <option value="low">Low (Trace elements)</option>
+                            <option value="medium">Medium (Accumulating)</option>
+                            <option value="high">High (Severe blockage)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-bottom: 1.5rem;">
+                    <label>Internal Administrator Notes</label>
+                    <textarea id="manual-desc" class="premium-input" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-glow" style="width: 100%; justify-content: center;">Force Entry into Matrix</button>
+            </form>
         </div>
     </div>
     
@@ -161,15 +212,14 @@
     <div class="toast" id="toast">
         <span class="toast-message"></span>
     </div>
-    
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
-    
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static', filename='js/report_management.js') }}"></script>
-    
+
     <script>
         // Initialize page
         async function initHotspotReports() {
@@ -177,7 +227,7 @@
             reportManagement.renderHotspotStats('hotspot-stats-container');
             reportManagement.renderReportGrid('reports-container');
         }
-        
+
         function applyFilters() {
             const filters = {
                 status: document.getElementById('filter-status').value,
@@ -185,12 +235,12 @@
                 date_from: document.getElementById('filter-date-from').value,
                 date_to: document.getElementById('filter-date-to').value
             };
-            
+
             reportManagement.loadHotspotReports(filters).then(() => {
                 reportManagement.renderReportGrid('reports-container');
             });
         }
-        
+
         function clearFilters() {
             document.getElementById('filter-status').value = 'all';
             document.getElementById('filter-debris-type').value = 'all';
@@ -198,15 +248,15 @@
             document.getElementById('filter-date-to').value = '';
             applyFilters();
         }
-        
+
         function showDownloadModal() {
             document.getElementById('download-modal').classList.add('active');
         }
-        
+
         function closeDownloadModal() {
             document.getElementById('download-modal').classList.remove('active');
         }
-        
+
         function downloadReports(format) {
             const useFilters = document.getElementById('export-current-filters').checked;
             const filters = useFilters ? {
@@ -215,14 +265,52 @@
                 date_from: document.getElementById('filter-date-from').value,
                 date_to: document.getElementById('filter-date-to').value
             } : {};
-            
+
             reportManagement.downloadAllReports(filters);
             closeDownloadModal();
         }
-        
+
         // Load reports on page load
         document.addEventListener('DOMContentLoaded', initHotspotReports);
+        
+        async function submitAdminReport(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.innerHTML = 'Uploading...';
+            btn.disabled = true;
+            
+            const formData = new FormData();
+            formData.append('river_id', document.getElementById('manual-river-id').value);
+            formData.append('latitude', document.getElementById('manual-lat').value);
+            formData.append('longitude', document.getElementById('manual-lng').value);
+            formData.append('debris_type', document.getElementById('manual-type').value);
+            formData.append('estimated_amount', document.getElementById('manual-amount').value);
+            formData.append('description', document.getElementById('manual-desc').value);
+            
+            try {
+                const response = await fetch('/api/admin/reports/add', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Manual entry forcibly pushed to cloud matrix.');
+                    document.getElementById('add-report-modal').classList.remove('active');
+                    e.target.reset();
+                    // Refetch data
+                    initHotspotReports();
+                } else {
+                    alert('Error inserting matrix override: ' + result.error);
+                }
+            } catch (err) {
+                alert('Fatal interface error: ' + err);
+            } finally {
+                btn.innerHTML = 'Force Entry into Matrix';
+                btn.disabled = false;
+            }
+        }
     </script>
 </body>
-</html>
 
+</html>

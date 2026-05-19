@@ -31,9 +31,8 @@ class ReportManagement {
     
     async loadHotspotReports(filters = {}) {
         try {
-            const endpoint = this.userType === 'admin' 
-                ? '/api/admin/reports' 
-                : '/api/ngo/reports';
+            // Both Admin and NGO now utilize the same aggregated global reports endpoint
+            const endpoint = '/api/reports/all';
             
             const response = await fetch(endpoint);
             const data = await response.json();
@@ -98,6 +97,9 @@ class ReportManagement {
             ? `/static/img/reports/${report.photo}` 
             : null;
         
+        const totalAmount = (report.plastic_amount||0) + (report.organic_amount||0) + (report.household_amount||0) + (report.industrial_amount||0) + (report.others_amount||0);
+        const amountDisplay = totalAmount > 0 ? `${totalAmount.toFixed(1)} kg` : report.estimated_amount;
+
         return `
             <div class="report-card-detailed" data-report-id="${report.id}">
                 ${imageUrl ? `
@@ -119,12 +121,12 @@ class ReportManagement {
                     
                     <div class="report-details-grid">
                         <div class="report-detail-item">
-                            <span class="report-detail-label">Debris Type</span>
+                            <span class="report-detail-label">Primary Type</span>
                             <span class="debris-type-badge ${report.debris_type}">${report.debris_type}</span>
                         </div>
                         <div class="report-detail-item">
-                            <span class="report-detail-label">Amount</span>
-                            <span class="amount-badge ${report.estimated_amount}">${report.estimated_amount}</span>
+                            <span class="report-detail-label">Total Amount</span>
+                            <span class="amount-badge ${report.estimated_amount}">${amountDisplay}</span>
                         </div>
                     </div>
                     
@@ -154,6 +156,11 @@ class ReportManagement {
                                         <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13M18.5 2.5C18.8978 2.10217 19.4374 1.87868 20 1.87868C20.5626 1.87868 21.1022 2.10217 21.5 2.5C21.8978 2.89782 22.1213 3.43739 22.1213 4C22.1213 4.56261 21.8978 5.10217 21.5 5.5L12 15L8 16L9 12L18.5 2.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </button>
+                                <button class="btn-icon-action" style="color: #ff4d4d; border-color: rgba(255, 77, 77, 0.3);" onclick="reportManagement.deleteReport(${report.id})" title="Delete">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4 7H20M10 11V17M14 11V17M5 7L6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19L19 7M9 7V4C9 3.44772 9.44772 3 10 3H14C14.5523 3 15 3.44772 15 4V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </button>
                             ` : ''}
                         </div>
                     </div>
@@ -172,6 +179,30 @@ class ReportManagement {
                 this.viewReport(reportId);
             });
         });
+    }
+
+    async deleteReport(id) {
+        if (!confirm('Are you absolutely sure you want to permanently delete this report data?')) return;
+        
+        try {
+            const response = await fetch('/api/admin/reports/' + id + '/delete', {
+                method: 'POST'
+            });
+            const data = await response.json();
+            if (data.success) {
+                this.reports = this.reports.filter(r => r.id !== id);
+                this.filteredReports = this.filteredReports.filter(r => r.id !== id);
+                this.renderReportGrid('reports-container');
+                this.calculateStats();
+                this.renderHotspotStats('hotspot-stats-container');
+                alert('Report successfully deleted.');
+            } else {
+                alert('Failed to delete report: ' + data.error);
+            }
+        } catch (error) {
+            console.error('Error deleting report:', error);
+            alert('An error occurred during deletion.');
+        }
     }
     
     getEmptyState() {
@@ -263,15 +294,55 @@ class ReportManagement {
                 </div>
             </div>
             
+            ${report.snapshot_estimated_payload ? `
+                <div class="report-info-section">
+                    <h3>🔮 System Prediction Snapshot</h3>
+                    <div style="background:#f4f6f8; border:1px solid #ced4da; padding:16px; border-radius:12px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
+                            <span style="color: #495057; font-size: 14px; font-weight: 600;">Predicted Daily Payload</span>
+                            <span style="font-weight: 700; font-size: 16px; color: #d9534f;">${report.snapshot_estimated_payload.toFixed(2)} kg</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; color: #6c757d; border-top: 1px dashed #ced4da; padding-top: 12px;">
+                            <div>🌧️ Rain: ${report.snapshot_rainfall || 0} mm</div>
+                            <div>💨 Wind: ${report.snapshot_wind_speed || 0} kph</div>
+                            <div>🌊 Tide: ${report.snapshot_tide_level || 0} m</div>
+                            <div>💧 Flow: ${report.snapshot_water_flow || 0} m³/s</div>
+                        </div>
+                    </div>
+                </div>
+            ` : ''}
+            
             <div class="report-info-section">
-                <h3>🗑️ Debris Information</h3>
+                <h3>🗑️ Actual Debris Collected / Cleaned</h3>
+                <div style="background:#f8f9fa; border:1px solid #ced4da; padding:16px; border-radius:12px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                        <span style="color: #495057;">🥤 Plastic</span>
+                        <span style="font-weight: 600;">${report.plastic_amount || 0} kg</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                        <span style="color: #495057;">🍂 Organic</span>
+                        <span style="font-weight: 600;">${report.organic_amount || 0} kg</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                        <span style="color: #495057;">🛋️ Household</span>
+                        <span style="font-weight: 600;">${report.household_amount || 0} kg</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                        <span style="color: #495057;">🏭 Industrial</span>
+                        <span style="font-weight: 600;">${report.industrial_amount || 0} kg</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                        <span style="color: #495057;">📦 Others</span>
+                        <span style="font-weight: 600;">${report.others_amount || 0} kg</span>
+                    </div>
+                </div>
                 <div class="report-info-grid">
                     <div class="report-info-item">
-                        <label>Debris Type</label>
+                        <label>Primary Type</label>
                         <p><span class="debris-type-badge ${report.debris_type}">${report.debris_type}</span></p>
                     </div>
                     <div class="report-info-item">
-                        <label>Estimated Amount</label>
+                        <label>Tier</label>
                         <p><span class="amount-badge ${report.estimated_amount}">${report.estimated_amount}</span></p>
                     </div>
                     <div class="report-info-item">
