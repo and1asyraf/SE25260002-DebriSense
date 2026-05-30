@@ -1,0 +1,116 @@
+### 1. The Debris Risk Index (DRI) Calculation
+Algorithm 1 outlines the comprehensive computational logic required to generate the Debris Risk Index (DRI), which serves as the core predictive engine of the DebriSense platform. The algorithm systematically ingests real-time environmental parameters—such as rainfall intensity, tide levels, wind speed, and water flow velocity—and normalizes them into a standardized mathematical scale against predefined physical thresholds. These normalized values are subsequently multiplied by dynamically adapted heuristic weights, which dictate the relative environmental importance of each factor. The resulting sum is converted into a 100-point risk score. Finally, this score is evaluated against rigid conditional boundaries to assign a categorical severity level, ensuring that environmental authorities and NGOs receive accurate, actionable data regarding potential river blockages and accumulation threats.
+
+```text
+Algorithm 1: Calculate Debris Risk Index (DRI)
+Input: rainfall (mm), tide_level (m), wind_speed (kph), water_flow (m³/s)
+Output: DRI_Score, Risk_Level
+
+BEGIN
+    // Step 1: Normalize inputs to a 0.0 - 1.0 scale based on physical max thresholds
+    norm_rainfall = MIN(rainfall / MAX_RAINFALL, 1.0)
+    norm_tide = MIN(tide_level / MAX_TIDE, 1.0)
+    norm_wind = MIN(wind_speed / MAX_WIND, 1.0)
+    norm_flow = MIN(water_flow / MAX_FLOW, 1.0)
+    
+    // Step 2: Fetch dynamically adapted weights from system settings
+    weights = GET_ADAPTIVE_WEIGHTS()
+    
+    // Step 3: Compute weighted sum based on environmental importance
+    DRI_Score = (norm_rainfall * weights.rain) + (norm_tide * weights.tide) + 
+                (norm_wind * weights.wind) + (norm_flow * weights.flow)
+                
+    // Step 4: Scale to a 100-point index
+    DRI_Score = DRI_Score * 100
+    
+    // Step 5: Determine Categorical Risk Level for Alerts
+    IF DRI_Score >= 80 THEN
+        Risk_Level = "Critical"
+    ELSE IF DRI_Score >= 60 THEN
+        Risk_Level = "High"
+    ELSE IF DRI_Score >= 40 THEN
+        Risk_Level = "Moderate"
+    ELSE
+        Risk_Level = "Low"
+    END IF
+    
+    RETURN DRI_Score, Risk_Level
+END
+```
+
+---
+
+### 2. Adaptive Knowledge Engineering (Empirical Feedback Loop)
+Algorithm 2 demonstrates the Adaptive Knowledge Engineering mechanism seamlessly embedded within the system's predictive modeling architecture. In order to transition from static estimations to dynamic learning, the algorithm calculates the precise error margin between the system's mathematically estimated debris payload and the actual empirical payload submitted via ground-truth NGO cleanup reports. Utilizing a controlled learning rate (alpha), the algorithm iteratively recalibrates the baseline payload multiplier to account for localized environmental shifts without causing erratic or unstable data spikes. By constantly evaluating its own historical inaccuracies and dynamically adjusting its foundational weights, the system establishes a proactive feedback loop that guarantees continuous, autonomous improvement in predictive accuracy and spatial forecasting over time.
+
+```text
+Algorithm 2: Adaptive Weight Recalibration (Feedback Loop)
+Input: predicted_payload (kg), actual_payload (kg) from NGO report
+Output: Updated Payload Multiplier
+
+BEGIN
+    // Step 1: Calculate the prediction error margin
+    error_margin = actual_payload - predicted_payload
+    error_percentage = (error_margin / predicted_payload) * 100
+    
+    // Step 2: Define learning rate (alpha) to prevent drastic, unstable spikes
+    alpha = 0.05
+    
+    // Step 3: Adjust the baseline payload multiplier based on error
+    current_multiplier = GET_GLOBAL_PAYLOAD_MULTIPLIER()
+    
+    IF error_percentage > 10 THEN
+        // System under-predicted -> gradually increase multiplier
+        new_multiplier = current_multiplier + (current_multiplier * alpha)
+    ELSE IF error_percentage < -10 THEN
+        // System over-predicted -> gradually decrease multiplier
+        new_multiplier = current_multiplier - (current_multiplier * alpha)
+    ELSE
+        // Within acceptable 10% bounds -> do nothing
+        new_multiplier = current_multiplier
+    END IF
+    
+    // Step 4: Save new multiplier to database for future predictions
+    SAVE_GLOBAL_PAYLOAD_MULTIPLIER(new_multiplier)
+    
+    RETURN new_multiplier
+END
+```
+
+---
+
+### 3. Targeted Watchlist Alert Distribution
+Algorithm 3 details the sophisticated automated background alerting protocol responsible for dispatching real-time notifications to stakeholders. Executed via a scheduled cron job, the algorithm evaluates newly calculated Debris Risk Index (DRI) scores across all active river locations. Instead of broadcasting generic notifications to all users, the system selectively queries relational databases to dispatch targeted alerts exclusively to NGO users based on their personalized geographical watchlists, ensuring high operational relevance. Furthermore, the algorithm strictly incorporates a temporal filtering mechanism to cross-reference past notifications. This prevents redundant alert duplication and severe user fatigue during prolonged critical weather events, ensuring that the platform's communication channels remain an effective, non-intrusive tool for urgent logistical coordination.
+
+```text
+Algorithm 3: Dispatch Automated Watchlist Alerts
+Input: newly_calculated_rivers_list
+Output: Real-time alerts sent to relevant NGO users
+
+BEGIN
+    FOR EACH river IN newly_calculated_rivers_list DO
+        
+        // Only trigger alerts for severe conditions
+        IF river.risk_level == "High" OR river.risk_level == "Critical" THEN
+            
+            // Fetch all users who have favorited this specific river
+            watchers = DB_QUERY("SELECT user_id FROM Watchlist WHERE river_id = ?", river.id)
+            
+            FOR EACH user IN watchers DO
+                // Check if user already received an alert for this river recently to avoid spam
+                last_alert = DB_QUERY("SELECT time FROM Alerts WHERE user_id = ? AND river_id = ? ORDER BY time DESC LIMIT 1", user.id, river.id)
+                
+                IF last_alert IS NULL OR TIME_DIFFERENCE(CURRENT_TIME(), last_alert) > 24 HOURS THEN
+                    // Create and dispatch new localized alert
+                    alert_message = "Warning: " + river.name + " has reached " + river.risk_level + " levels."
+                    
+                    new_alert = CREATE_ALERT(user.id, river.id, alert_message)
+                    SAVE_TO_DATABASE(new_alert)
+                    EMIT_REALTIME_SOCKET_EVENT(user.id, new_alert)
+                END IF
+            END FOR
+            
+        END IF
+    END FOR
+END
+```

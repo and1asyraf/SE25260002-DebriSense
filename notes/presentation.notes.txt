@@ -1,0 +1,50 @@
+# DebriSense System Demo Presentation Flow
+
+## 1. Introduction (2-3 minutes)
+*   **Greeting & Project Overview:** Introduce the team and "DebriSense" as a Predictive Debris Risk Monitoring System for Malaysian Rivers.
+*   **Problem Statement:** Briefly explain the issue of river debris in Malaysia and the need for a proactive monitoring system.
+*   **Core Concept:** Highlight that DebriSense uses a *Debris Risk Index (DRI)*—a transparent, rule-based weighted index modeled after the DOE's Water Quality Index (WQI). Emphasize clearly to the examiners: **"This system does NOT use machine learning for risk prediction. It relies on a transparent, deterministic rule-based calculation."**
+
+## 2. Public Facing & AI Chatbot (2 minutes)
+*   **Landing Page (`/`):** Show the initial landing screen.
+*   **Chatbot Assistant:** Demonstrate the interactive AI Chatbot embedded in the page. Ask a simple question about river debris or how to use the system to show how it assists users and provides immediate information.
+*   **Registration/Login (`/be-part-of-us` & `/login`):** Show the pathway for NGOs to register for an account to actively participate in the system.
+
+## 3. NGO User Journey (5-6 minutes)
+*   **NGO Login:** Log in with a registered NGO account.
+*   **NGO Dashboard (`/ngo-dashboard`):**
+    *   Show the overview of current river conditions.
+    *   **Interactive Map:** Demonstrate the Leaflet.js map integration. Show how rivers are plotted and visually color-coded based on their current DRI risk level (e.g., Safe, Warning, Critical).
+*   **River Watchlist & Alerts:** 
+    *   Show how an NGO can add specific rivers to their "Watchlist".
+    *   Explain the in-app notification/alert system when a watched river hits a High or Critical DRI score.
+*   **Hotspot Reporting (`/ngo/reports`):** 
+    *   Walk through submitting a new hotspot report.
+    *   Show the form fields: Debris type (plastic, organic, etc.), estimated amount, description, and photo upload.
+    *   Explain how the system captures a "snapshot" of environmental factors (rainfall, wind speed, etc.) at the exact time of the report for later analysis.
+*   **Requesting New Locations:** Demonstrate how an NGO can request a new river location to be monitored by the administration.
+*   **Data Export:** Briefly show the ability to export river history or watchlist data for NGO reporting purposes.
+
+## 4. Admin User Journey (5-6 minutes)
+*   **Admin Login (`/admin-login`):** Switch roles and log in as a System Administrator.
+*   **Admin Dashboard (`/admin-dashboard`):**
+    *   Show the high-level system metrics: Total monitored rivers, total registered NGOs, pending reports, and active system alerts.
+*   **User Management (`/admin/users`):**
+    *   Show how admins verify newly registered NGOs and manage their active status.
+*   **River Management (`/admin/rivers`):**
+    *   Demonstrate adding a new river to the system.
+    *   *Key Feature Highlight:* Point out the "Land Use Type" field (urban, industrial, rural, coastal, mixed). Explain how the system uses this to generate a specific "Debris Profile" prediction (e.g., urban rivers will predict higher household/plastic waste vs. industrial rivers).
+*   **Reviewing NGO Reports (`/admin/reports` & Location Requests):**
+    *   Show the admin interface for reviewing hotspot reports submitted by NGOs.
+    *   Show the process of accepting or resolving a report.
+    *   Show how admins can review and approve new location requests from NGOs, converting them into monitored rivers.
+
+## 5. Debris Risk Index (DRI) Deep Dive (3 minutes)
+*   **The Calculation Engine:** Take a moment to explain the logic behind the dashboard. Show historical DRI readings.
+*   **Environmental Factors:** Explain how inputs like rainfall, wind speed, tide level, and water flow directly affect the resulting DRI score and the estimated payload of debris (kg). 
+*   **Transparency:** Reiterate that this rule-based approach provides explainability, which is vital for environmental monitoring compared to black-box AI models.
+
+## 6. Conclusion & Q&A (1-2 minutes)
+*   **Summary:** Recap the value of DebriSense in bridging the gap between proactive monitoring and NGO on-the-ground action.
+*   **Future Work:** Mention potential future enhancements (e.g., IoT sensor integration for live data, expanding to more states).
+*   **Open the floor to the Supervisor and Examiner for Q&A.**

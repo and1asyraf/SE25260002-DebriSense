@@ -447,7 +447,7 @@ async function showRiverDetails(river, driData) {
         
         <div class="sidebar-section">
             <h3>Predicted Debris Breakdown</h3>
-            <div style="height: 200px; position: relative;">
+            <div style="height: 250px; position: relative;">
                 <canvas id="debrisPieChart"></canvas>
             </div>
             <p style="font-size: 12px; color: #6c757d; text-align: center; margin-top: 10px;">
@@ -549,7 +549,7 @@ async function showRiverDetails(river, driData) {
                     var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
                     var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
                     
-                    var fontSize = (chart.height / 110).toFixed(2);
+                    var fontSize = (chart.height / 140).toFixed(2);
                     ctx.font = "bold " + fontSize + "em sans-serif";
                     ctx.textBaseline = "middle";
                     ctx.textAlign = "center";
@@ -574,7 +574,7 @@ async function showRiverDetails(river, driData) {
                         data: data,
                         backgroundColor: colors,
                         borderWidth: 1,
-                        cutout: '70%'
+                        cutout: '80%'
                     }]
                 },
                 plugins: [centerTextPlugin],
@@ -602,7 +602,7 @@ async function showRiverDetails(river, driData) {
                                             const exactWeight = ((val / 100) * totalPayload).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                                             const isMax = val === Math.max(...data.datasets[0].data);
                                             return {
-                                                text: `${label}: ${val}% (${exactWeight}kg) ${isMax ? '⚠️' : ''}`,
+                                                text: `${label}: ${Number(val).toFixed(2)}% (${exactWeight}kg) ${isMax ? '⚠️' : ''}`,
                                                 fillStyle: style.backgroundColor,
                                                 strokeStyle: style.borderColor,
                                                 lineWidth: style.borderWidth,
@@ -621,7 +621,7 @@ async function showRiverDetails(river, driData) {
                                     const label = context.label || '';
                                     const val = context.raw || 0;
                                     const exactWeight = ((val / 100) * totalPayload).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                                    return `${label}: ${val}% (${exactWeight} kg)`;
+                                    return `${label}: ${Number(val).toFixed(2)}% (${exactWeight} kg)`;
                                 },
                                 afterLabel: function(context) {
                                     return '💡 ' + (logisticalHints[context.label] || '');
