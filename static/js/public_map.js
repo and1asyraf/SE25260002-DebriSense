@@ -549,7 +549,11 @@ async function showRiverDetails(river, driData) {
                     var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
                     var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
                     
-                    var fontSize = (chart.height / 140).toFixed(2);
+                    // Make text smaller on mobile to prevent cutting off
+                    var isMobile = window.innerWidth <= 768;
+                    var baseSize = Math.min(chart.width, chart.height);
+                    var fontSize = (baseSize / (isMobile ? 220 : 170)).toFixed(2);
+                    
                     ctx.font = "bold " + fontSize + "em sans-serif";
                     ctx.textBaseline = "middle";
                     ctx.textAlign = "center";
@@ -583,12 +587,13 @@ async function showRiverDetails(river, driData) {
                     maintainAspectRatio: false,
                     layout: {
                         padding: {
-                            right: 20 // Extra padding for the legend
+                            right: window.innerWidth <= 768 ? 0 : 20,
+                            bottom: window.innerWidth <= 768 ? 10 : 0
                         }
                     },
                     plugins: {
                         legend: { 
-                            position: 'right',
+                            position: window.innerWidth <= 768 ? 'bottom' : 'right',
                             labels: {
                                 boxWidth: 12,
                                 font: { size: 11 },
