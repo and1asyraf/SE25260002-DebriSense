@@ -72,18 +72,7 @@ def submit_hotspot_report_regular():
             )
             db.session.add(alert)
                 
-        # Generate Alerts for Regular Watchlist users
-        regular_watchers = RegularWatchlist.query.filter_by(river_id=river_id).all()
-        for rw in regular_watchers:
-            if rw.regular_user_id != current_user.id:
-                ralert = RegularAlert(
-                    regular_user_id=rw.regular_user_id,
-                    alert_type='new_report',
-                    title='New Hotspot Report',
-                    message=f'A new {debris_type} hotspot report was submitted for {report.river.name}.',
-                    river_id=river_id
-                )
-                db.session.add(ralert)
+        # Regular Watchlist functionality not yet implemented
             
         db.session.commit()
         

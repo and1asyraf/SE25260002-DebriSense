@@ -324,6 +324,15 @@ async function submitDebrisReport(e) {
     e.preventDefault();
     
     const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    
+    // Disable button to prevent multiple submissions
+    if (submitBtn) {
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+    }
+    
     const formData = new FormData(form);
     
     try {
@@ -343,6 +352,12 @@ async function submitDebrisReport(e) {
     } catch (error) {
         console.error('Error submitting report:', error);
         showToast('Error submitting report', 'error');
+    } finally {
+        // Re-enable button
+        if (submitBtn) {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
     }
 }
 

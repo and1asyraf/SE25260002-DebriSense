@@ -1,0 +1,58 @@
+=========================================================
+Front Page
+=========================================================
+Name            : [Your Name Here]
+Email           : [Your Email Here]
+Supervisor Name : [Supervisor Name Here]
+Supervisor Email: [Supervisor Email Here]
+
+=========================================================
+DebriSense: 15-Minute Industry Pitch Script
+=========================================================
+
+[0:00 - 0:30] 2. Introduction
+"Good morning, esteemed panel, industry leaders, and guests. Today, I am not just presenting a final year project—I am introducing a scalable, data-driven solution to one of Malaysia's most pressing environmental and economic challenges: River Debris Management."
+
+[0:30 - 1:30] 3. Description of Problem Statement
+"Malaysia's rivers are suffocating. Each year, millions of tonnes of industrial, plastic, and organic waste flow through our waterways. This isn't just an environmental tragedy; it's a massive economic liability. 
+Industries face heavy cleanup costs and compliance fines, while local councils and waste management concessionaires are overwhelmed. The core problem is that current monitoring methods are highly reactive. We only know there is a problem *after* the debris has accumulated, turning a manageable issue into a multi-million Ringgit disaster."
+
+[1:30 - 2:00] 4. Objective of Project
+"Our objective with DebriSense is to shift this paradigm from reactive cleanup to proactive risk management. We aim to predict where debris will accumulate before a crisis hits, using transparent, verifiable data, empowering both organizations and NGOs to mobilize their resources efficiently."
+
+[2:00 - 3:00] 5. Proposed Solution
+"Enter DebriSense: A Predictive Debris Risk Monitoring System. Instead of waiting for waste to pile up, DebriSense uses a proprietary Debris Risk Index (DRI). Modeled closely after the Department of Environment's Water Quality Index, our DRI calculates risk based on live environmental factors—like rainfall, water flow, and tide levels—combined with specific land-use profiles, whether the river flows through an urban center or an industrial zone."
+
+[3:00 - 4:00] 6. System Module & Architecture
+"DebriSense is built for enterprise scale and accessibility. 
+Our backend is powered by Python Flask and integrated with Supabase—a robust PostgreSQL database—for secure data management. The frontend utilizes HTML, JS, and Leaflet.js to render an interactive, real-time map. The core intelligence lies in our DRI engine, which processes environmental snapshots without relying on unpredictable black-box AI, ensuring our index is scientifically transparent and auditable for corporate compliance."
+
+[4:00 - 5:00] 7. Impact & Benefits
+"The impact is immediate: Optimized Resource Allocation. 
+For local governments, it means dispatching cleanup crews exactly where they are needed, *when* they are needed. For industries, it acts as a transparent ESG (Environmental, Social, and Governance) monitoring tool, helping corporations maintain compliance, protect their brand image, and avoid massive regulatory fines."
+
+[5:00 - 7:00] 8. Entrepreneurship Opportunity (The Business Case)
+"This brings us to the commercial viability of DebriSense. There is a highly lucrative B2B and B2G (Business-to-Government) market for this platform.
+First, a SaaS Model for ESG Compliance. Corporations with factories near waterways can subscribe to DebriSense for real-time monitoring to report directly to their stakeholders, proving their commitment to sustainability.
+Second, Data-as-a-Service (DaaS) for waste management concessionaires, such as Alam Flora. By utilizing our predictive DRI, these companies can cut their operational and logistics costs by up to 30%. Instead of paying for daily blind patrols, they deploy logistics only when the system alerts them to a 'High Risk' scenario. DebriSense is not just an app—it is a vital enterprise tool for the green economy."
+
+[7:00 - 15:00] 9. System Walkthrough (Live Demo & Storytelling)
+*(Action: Display a large QR Code on the presentation slide)*
+
+"Let me show you exactly how this translates to the real world. Please scan the QR code on the screen right now. It links directly to our live, hosted system. Let's step into a real-life scenario, partnering with one of Malaysia's leading environmental NGOs, EcoKnights.
+
+(Wait 10 seconds for scanning)
+
+**The Corporate / Public View (2 mins):**
+As you look at your phones, you are seeing what a corporate client or the public sees. The map shows a segment of the Klang River. Notice the visual indicators. You can see the DRI score for the industrial segment is currently showing 'High Risk'. Because our system knows this is an industrial land-use profile, it's predicting heavy plastic and chemical waste accumulation based on recent rainfall.
+
+**The Action / NGO View (3 mins):**
+Now, let’s look at the big screen. I am logging in as a field officer from EcoKnights—our boots on the ground. EcoKnights has placed this specific river segment on their 'Watchlist'. Overnight, a combination of heavy rainfall and high tide caused the DRI to spike to 'Critical'. 
+DebriSense didn't wait for a human to check the app; it automatically triggered an email alert to the EcoKnights team. Instead of patrolling blindly, they dispatch their volunteers straight to the predicted hotspot.
+Upon arrival, they see the debris. Using DebriSense on their mobile devices, they instantly submit a 'Hotspot Report'. They log 500kg of industrial waste, snap a geo-tagged photo, and the system automatically captures a snapshot of the environmental data (tide, wind, rain) at that exact second.
+
+**The Enterprise / Admin View (3 mins):**
+This field data instantly feeds back to the Admin and Corporate Dashboards. If Alam Flora is the client, their command center sees this validated report from EcoKnights immediately. They can review the data and dispatch a heavy cleanup barge with absolute precision.
+Furthermore, to support our on-ground users, we’ve integrated an AI Chatbot. An EcoKnights volunteer can open the chat and ask, 'What is the safety protocol for handling industrial waste at a high DRI level?' and receive immediate, actionable guidance. 
+
+From predictive risk modeling, to NGO mobilization, to enterprise cleanup—DebriSense orchestrates the entire lifecycle. Thank you."

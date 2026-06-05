@@ -1,0 +1,78 @@
+=========================================================
+Front Page
+=========================================================
+Name            : [Your Name Here]
+Email           : [Your Email Here]
+Supervisor Name : [Supervisor Name Here]
+Supervisor Email: [Supervisor Email Here]
+
+=========================================================
+DebriSense: 15-Minute Industry & NGO Pitch Script
+=========================================================
+
+[0:00 - 0:30] 2. Introduction
+"Good morning, esteemed panel, industry leaders, and guests. Today, I am presenting DebriSense, a scalable, data-driven solution designed to tackle one of Malaysia's most pressing environmental challenges: River Debris Management."
+
+[0:30 - 1:30] 3. Description of Problem Statement
+"Malaysia's rivers are suffocating. Each year, millions of tonnes of industrial, plastic, and organic waste flow through our waterways. This isn't just an environmental tragedy; it's a massive economic and logistical liability for local governments and NGOs. The core problem is that current monitoring methods are reactive. NGOs and local councils only know there is a problem after the debris has accumulated, resulting in wasted manpower, inefficient patrols, and expensive, delayed cleanup efforts."
+
+[1:30 - 2:00] 4. Objective of Project
+"Our objective with DebriSense is to shift this paradigm from reactive cleanup to proactive risk management. We aim to predict where debris will accumulate before a crisis hits, empowering NGOs to plan their cleanups efficiently and use their limited resources exactly where they matter most."
+
+[2:00 - 3:00] 5. Proposed Solution
+"Instead of waiting for waste to pile up, DebriSense uses a proprietary Debris Risk Index (DRI). By taking live environmental factors—like rainfall, water flow, and tide levels—and combining them with specific land-use profiles, we can predict debris accumulation. But what truly makes DebriSense powerful is how it leverages on-ground data from NGOs to constantly learn and improve."
+
+[3:00 - 4:00] 6. System Module & Architecture
+"Our backend is powered by Python Flask and integrated with Supabase for robust, secure data management. The frontend utilizes HTML, JS, and Leaflet.js to render an interactive map. The core intelligence lies in our DRI engine, which processes environmental snapshots and user-submitted data to generate real-time risk scores."
+
+[4:00 - 5:00] 7. Impact & Benefits & 8. Entrepreneurship Opportunity
+"For industries, this acts as a transparent ESG compliance tool. But the biggest impact is on the operational efficiency of waste management. By utilizing DebriSense, organizations can cut their logistics costs massively. They deploy boats and volunteers only when the system alerts them. DebriSense is not just an app—it is a vital enterprise tool for the green economy."
+
+=========================================================
+[5:00 - 15:00] 9. System Walkthrough (The 10-Minute Core Demo)
+=========================================================
+
+1. QR Code & Desktop Setup
+Script: "Okay, so now let's start with the project demonstration. You guys can scan the QR code on the screen to access DebriSense on the net, or you can follow along right here as I will use my desktop view dashboard to drive this highly detailed system storytelling."
+
+2. index.html (The Public View)
+Script: "This is the landing page of DebriSense. This is exactly what public users, without an account, can access. You can see all the markers here on the interactive map; these represent the hotspots and river segments that are already registered in the system. When a public user clicks on a hotspot, it brings up a bottom-up bar. It will show the current Debris Risk Index (DRI) score, the estimated risk level, and current environmental factors. For an NGO, even before they log in, this public view serves as a quick daily brief on the health of our rivers."
+
+3. NGO-Register.html (Onboarding)
+Script: "But to really take action, an NGO needs the right tools. An NGO can register here. For this demonstration, we are going to register as a real, highly active NGO: 'Friends of Rivers Malaysia'. They input their organization's details, verify their credentials, and set up their profile. Now, let's log in as 'Friends of Rivers Malaysia' and use this account throughout the rest of our example to see how DebriSense fundamentally changes how they operate."
+
+4. NGO-Dashboard.html (Strategic Planning & The Tool Suite)
+Script: "Once logged in, we land on the NGO Dashboard. This is where the magic happens. Let's look at the suite of tools built specifically for NGO decision-making."
+
+**The Notifications & Watchlist:** 
+Script: "First, look at the top right: The Notifications bell. Friends of Rivers Malaysia has added several vulnerable rivers to their 'Watchlist'. Overnight, heavy storms hit. When they log in this morning, a notification pops up immediately: *'Alert: Klang River Segment 4 has reached a Critical DRI level.'* Because NGOs run on limited volunteer hours and tight budgets, this notification directly dictates their planning. Instead of guessing where to patrol, DebriSense has just told them exactly where to plan this weekend's Clean Up."
+
+**Submit Hotspot Report (The ML Feedback Loop):**
+Script: "Let's say they execute the cleanup based on that alert. Once finished, they open the 'Submit Hotspot Report' tool. They take a photo of the cleared site, and they input the exact metrics—for example, 500kg of plastic waste and 200kg of organic waste. Here is where the system truly shines: this report submission after every cleanup contributes directly to the system's machine learning. The system takes their verified 500kg waste report and cross-references it with the exact environmental snapshot (the rainfall, the tide, the wind speed) captured at the time. The more cleanups they report, the smarter our predictive model becomes."
+
+**My Reports:**
+Script: "But what about tracking their own progress? They can click on the 'My Reports' tab. This page acts as a personal ledger for Friends of Rivers Malaysia. It shows a history of every single report they've ever submitted. This is incredibly useful for them to track their total impact over the year, allowing them to see exactly how many tonnes of waste they've removed from the ecosystem."
+
+**Export Data:**
+Script: "And when it comes time for them to secure funding or report to their sponsors, they can use the 'Export Data' tool. With one click, they can download all their historical cleanup stats—every report, every kilo of waste—into a structured format to present to their stakeholders. We are giving them enterprise-level reporting tools."
+
+**Location Requests & My Requests:**
+Script: "Furthermore, Friends of Rivers Malaysia often operates in new areas that might not be on our official map yet. Through the 'Location Request' tool, they pin a new coordinate and request to add it. To keep track of this, they can visit the 'My Requests' page, which shows the status of all their pending location requests waiting for Admin approval."
+
+5. Chatbot-Module.html (AI Cleanup Assistant)
+Script: "Before we leave the NGO dashboard, I want to highlight the AI Chatbot module. While planning a cleanup, the NGO coordinator can ask the chatbot, 'What are the recommended safety protocols and necessary equipment for a heavy industrial waste cleanup at a Critical DRI level?' The chatbot processes this and gives them an instant, tailored preparation list, ensuring the safety of their volunteers."
+
+6. Admin-login.html (Transition to Backend)
+Script: "Now, all of this incredible data being generated by Friends of Rivers Malaysia needs oversight. We need to ensure that the data feeding our machine learning model is pure. I will now log out of the NGO account and log in through the Admin Portal to show you how the system handles validation."
+
+7. Admin-dashboard.html (Data Validation & Oversight)
+Script: "Welcome to the Admin Dashboard. This is the command center. 
+Let's look at the requests first. Remember the Location Request that Friends of Rivers Malaysia just submitted? It shows up right here in the pending requests queue. The admin reviews the coordinates and clicks 'Approve'. Two things happen instantly: First, that new river goes live on the dashboard for everyone to see. Second, it sends an automated notification back to Friends of Rivers Malaysia letting them know their requested hotspot is now active.
+
+More importantly, let's look at the Hotspot Reports. The admin can see the 500kg plastic waste report submitted after the NGO's weekend cleanup. The admin reviews the attached photo and the environmental metrics. Once the admin clicks 'Approve', this precise, ground-truthed data point is locked into the database to train the machine learning algorithm.
+
+And here is the final piece of the puzzle: Once approved by the admin, this report doesn't just disappear. It is pushed to the global **Hotspot Reports Page**. This page is visible to all users, creating a transparent, system-wide ledger of cleanups. Other NGOs, public users, and corporate sponsors can scroll through the Hotspot Reports Page and see exactly what Friends of Rivers Malaysia accomplished that weekend. 
+
+By bridging the gap between on-ground NGO actions and high-level administrative validation, DebriSense ensures that every single cleanup plan is driven by data, every piece of collected debris makes the system's predictions smarter for tomorrow, and every NGO gets the visibility and tools they need to succeed.
+
+Thank you for your time, I would now like to open the floor to any questions."
