@@ -447,6 +447,12 @@ async function showRiverDetails(river, driData) {
         
         <div class="sidebar-section">
             <h3>Predicted Debris Breakdown</h3>
+            <div style="font-size: 14px; margin-bottom: 15px; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+                <span><strong>Debris Risk Index (DRI)</strong></span>
+                <span style="color: ${driData.risk_color}; font-weight: bold; font-size: 18px;">
+                    ${driData.dri_score}<span style="font-size: 12px; color: #6c757d;">/100</span>
+                </span>
+            </div>
             <div style="height: 250px; position: relative;">
                 <canvas id="debrisPieChart"></canvas>
             </div>

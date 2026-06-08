@@ -100,7 +100,10 @@ def ngo_required(f):
 # Create database tables and default admin
 with app.app_context():
     # Create tables if they don't exist
-    db.create_all()
+    try:
+        db.create_all()
+    except Exception as e:
+        print(f"Database connection/creation error: {e}")
     
     # Create default admin if not exists
     try:
