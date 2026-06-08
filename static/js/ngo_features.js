@@ -455,13 +455,10 @@ async function submitLocationRequest(e) {
     
     const form = e.target;
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
     try {
         const response = await fetch('/api/ngo/requests/submit', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: formData
         });
         const result = await response.json();
         

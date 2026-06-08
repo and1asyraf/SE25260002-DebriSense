@@ -313,13 +313,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="sighting-date">Date of Sighting</label>
+                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="sighting-date">Date of Cleanup</label>
                         <input type="date" id="sighting-date" name="sighting_date" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ced4da;">
                     </div>
                     
                     <div class="form-group">
-                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="report-description">Description</label>
-                        <textarea id="report-description" name="description" rows="3" placeholder="Describe what you observed..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ced4da;"></textarea>
+                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="report-description">Report Description</label>
+                        <textarea id="report-description" name="description" rows="3" placeholder="Describe the Clean Up Session..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ced4da;"></textarea>
                     </div>
                     
                     <div class="form-group" style="margin-bottom: 30px;">
@@ -401,6 +401,15 @@
                     <div class="form-group">
                         <label for="additional-info">Additional Information</label>
                         <textarea id="additional-info" name="additional_info" rows="2" placeholder="Any other relevant details..."></textarea>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 30px;">
+                        <label style="font-size:12px; font-weight:600; color:#adb5bd; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; display:block;" for="req-photo">Photo Evidence (Optional)</label>
+                        <div style="border: 2px dashed #ced4da; border-radius: 12px; padding: 20px; text-align: center; background: #f8f9fa;">
+                            <span style="font-size: 24px; display: block; margin-bottom: 10px;">📸</span>
+                            <input type="file" id="req-photo" name="photo" accept=".png,.jpeg,.jpg" style="display: block; margin: 0 auto; color: #495057; font-size: 14px;">
+                            <p style="font-size: 12px; color: #6c757d; margin-top: 10px;">Supported formats: PNG, JPEG, JPG</p>
+                        </div>
                     </div>
                     
                     <div class="modal-actions">

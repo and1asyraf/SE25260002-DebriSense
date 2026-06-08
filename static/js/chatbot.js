@@ -323,8 +323,8 @@ class DebriSenseChatbot {
             const data = await response.json();
             
             if (data.success) {
-                // Strip markdown formatting if any accidentally leaked through, keeping HTML
-                let formattedText = data.response.replace(/```html\n?|```/g, '').trim();
+                // Parse markdown into HTML and format newlines
+                let formattedText = this.parseMarkdown(data.response);
                 this.addBotMessage(formattedText);
             } else {
                 this.addBotMessage(`⚠️ Error: ${data.error}`);
@@ -333,6 +333,31 @@ class DebriSenseChatbot {
             console.error('Chatbot API Error:', error);
             this.addBotMessage("Sorry, I'm having trouble connecting to my AI brain. Please try again later. 🤖⚡");
         }
+    }
+    
+    parseMarkdown(text) {
+        if (!text) return '';
+        
+        // Remove markdown codeblock wrappers if any
+        let html = text.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '').trim();
+        
+        // Escape HTML tags to prevent literal tags from rendering if the model incorrectly returns them
+        html = html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        
+        // Now convert actual markdown to HTML
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // bold
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>'); // italics
+        html = html.replace(/__(.*?)__/g, '<strong>$1</strong>'); // bold
+        html = html.replace(/_(.*?)_/g, '<em>$1</em>'); // italics
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:#667eea; text-decoration:underline;">$1</a>'); // links
+        
+        // Replace newlines with <br>
+        html = html.replace(/\n/g, '<br>');
+        
+        // Clean up multiple <br>s
+        html = html.replace(/(<br>\s*){2,}/g, '<br><br>');
+        
+        return html;
     }
     
     // Knowledge Base Methods

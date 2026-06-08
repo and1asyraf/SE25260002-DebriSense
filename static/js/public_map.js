@@ -500,13 +500,15 @@ async function showRiverDetails(river, driData) {
                 </div>
             </div>
         </div>
-        
+        `;
+    }
+
+    html += `
         <div class="sidebar-section" id="river-reports-section">
             <h3>📄 Historical Ground-Truth Logs</h3>
             <p style="font-size: 13px; color: #6c757d;">Loading reports...</p>
         </div>
-        `;
-    }
+    `;
 
     html += `
         <div class="sidebar-section" style="border-top: none;">
@@ -639,10 +641,8 @@ async function showRiverDetails(river, driData) {
         }
     }, 100);
 
-    // Load reports only when the user is logged in
-    if (isAuthenticated) {
-        loadRiverReportsIfLoggedIn(river.id);
-    }
+    // Load reports for the river
+    loadRiverReports(river.id);
     
     // Load Watchlist Button if Logged In
     if (isAuthenticated && (userRole === 'ngo' || userRole === 'regular')) {
@@ -809,21 +809,13 @@ function renderReportCard(report, index) {
     `;
 }
 
-async function loadRiverReportsIfLoggedIn(riverId) {
+async function loadRiverReports(riverId) {
     const section = document.getElementById('river-reports-section');
     if (!section) return;
 
     try {
         const sessionRes = await fetch('/api/auth/session', { credentials: 'same-origin' });
         const sessionData = await sessionRes.json();
-
-        if (!sessionData.authenticated) {
-            section.innerHTML = `
-                <h3>📄 Reports</h3>
-                <p style="font-size: 13px; color: #6c757d;">Log in to view reports for this location.</p>
-            `;
-            return;
-        }
 
         const reportsRes = await fetch(`/api/river/${riverId}/reports`, { credentials: 'same-origin' });
         if (!reportsRes.ok) {

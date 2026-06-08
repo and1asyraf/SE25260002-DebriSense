@@ -246,6 +246,12 @@
                                 <p>${req.additional_info}</p>
                             </div>
                             ` : ''}
+                            ${req.photo ? `
+                            <div class="detail-item full-width">
+                                <label>Location Photo:</label>
+                                <img src="/static/img/rivers/${req.photo}" alt="Location Photo" style="max-width: 100%; border-radius: 8px; margin-top: 10px;">
+                            </div>
+                            ` : ''}
                             <div class="detail-item">
                                 <label>Requested At:</label>
                                 <span>${req.requested_at}</span>

@@ -373,6 +373,7 @@ class LocationRequest(db.Model):
     # Request details
     reason = db.Column(db.Text, nullable=False)
     additional_info = db.Column(db.Text, nullable=True)
+    photo = db.Column(db.String(255), nullable=True)
     
     # Status
     status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
@@ -404,6 +405,7 @@ class LocationRequest(db.Model):
             'land_use': self.land_use,
             'reason': self.reason,
             'additional_info': self.additional_info,
+            'photo': self.photo,
             'status': self.status,
             'admin_response': self.admin_response,
             'reviewed_at': self.reviewed_at.strftime('%Y-%m-%d %H:%M') if self.reviewed_at else None,
@@ -428,7 +430,7 @@ class Alert(db.Model):
     
     # Related entities (optional)
     river_id = db.Column(db.Integer, db.ForeignKey('rivers.id'), nullable=True)
-    report_id = db.Column(db.Integer, db.ForeignKey('debris_reports.id'), nullable=True)
+    report_id = db.Column(db.Integer, db.ForeignKey('hotspot_reports.id'), nullable=True)
     request_id = db.Column(db.Integer, db.ForeignKey('location_requests.id'), nullable=True)
     
     # Status

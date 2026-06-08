@@ -66,9 +66,13 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
+            if request.path.startswith('/api/'):
+                return jsonify({'success': False, 'error': 'Authentication required'}), 401
             flash('Please log in as admin to access this page.', 'warning')
             return redirect(url_for('admin_login'))
         if not isinstance(current_user, Admin):
+            if request.path.startswith('/api/'):
+                return jsonify({'success': False, 'error': 'Access denied. Admin privileges required.'}), 403
             flash('Access denied. Admin privileges required.', 'error')
             return redirect(url_for('index'))
         return f(*args, **kwargs)
@@ -79,9 +83,13 @@ def ngo_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
+            if request.path.startswith('/api/'):
+                return jsonify({'success': False, 'error': 'Authentication required'}), 401
             flash('Please log in to access this page.', 'warning')
             return redirect(url_for('login'))
         if not isinstance(current_user, User):
+            if request.path.startswith('/api/'):
+                return jsonify({'success': False, 'error': 'Access denied. NGO account required.'}), 403
             flash('Access denied. NGO account required.', 'error')
             return redirect(url_for('index'))
         return f(*args, **kwargs)
@@ -452,28 +460,18 @@ def get_river_reports(river_id):
     - Otherwise: return deterministic mock reports.
     - Requires NGO/Admin login.
     """
-    if (not current_user.is_authenticated) or (not isinstance(current_user, (Admin, User))):
+    if False: # Removed authentication requirement for public access
         return jsonify({'success': False, 'error': 'Unauthorized'}), 401
 
     river = River.query.get(river_id)
     if not river:
         return jsonify({'success': False, 'error': 'River not found'}), 404
 
-    # Prefer real reports if they exist in DB
     reports = HotspotReport.query.filter_by(river_id=river_id).order_by(HotspotReport.reported_at.desc()).all()
-    if reports:
-        return jsonify({
-            'success': True,
-            'reports': [r.to_dict() for r in reports],
-            'total': len(reports),
-        })
-
-    # Fallback to mock reports
-    mock_reports = generate_mock_reports_for_river(river)
     return jsonify({
         'success': True,
-        'reports': mock_reports,
-        'total': len(mock_reports),
+        'reports': [r.to_dict() for r in reports],
+        'total': len(reports),
     })
 
 @app.route('/api/rivers')
@@ -1030,7 +1028,7 @@ def clear_rivers():
 @app.route('/api/reports/all', methods=['GET'])
 def get_all_reports_for_hotspots():
     """Get all debris reports (real and mock) for the Hotspot Reports dashboard"""
-    if not current_user.is_authenticated:
+    if False: # Removed authentication requirement for public access
         return jsonify({'success': False, 'error': 'Unauthorized'}), 401
 
     try:
@@ -1041,8 +1039,6 @@ def get_all_reports_for_hotspots():
             reports = HotspotReport.query.filter_by(river_id=river.id).order_by(HotspotReport.reported_at.desc()).all()
             if reports:
                 all_reports.extend([r.to_dict() for r in reports])
-            else:
-                all_reports.extend(generate_mock_reports_for_river(river))
                 
         all_reports.sort(key=lambda x: x.get('reported_at', ''), reverse=True)
                 
@@ -1359,7 +1355,17 @@ def get_my_requests():
 def submit_location_request():
     """Submit a request for new monitoring location"""
     try:
-        data = request.get_json()
+        data = request.form
+        
+        # Handle file upload
+        filename = None
+        if 'photo' in request.files:
+            file = request.files['photo']
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(f"req_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{file.filename}")
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                file.save(file_path)
         
         loc_request = LocationRequest(
             user_id=current_user.id,
@@ -1370,7 +1376,8 @@ def submit_location_request():
             district=data.get('district'),
             land_use=data.get('land_use', 'urban'),
             reason=data.get('reason'),
-            additional_info=data.get('additional_info', '')
+            additional_info=data.get('additional_info', ''),
+            photo=filename
         )
         db.session.add(loc_request)
         db.session.commit()
@@ -1603,6 +1610,11 @@ def ngo_hotspot_reports():
     """NGO page for viewing hotspot reports"""
     return render_template('ngo_hotspot_reports.html')
 
+@app.route('/hotspot-reports')
+def public_hotspot_reports():
+    """Public page for viewing hotspot reports"""
+    return render_template('public_hotspot_reports.html')
+
 @app.route('/admin/location-requests')
 @admin_required
 def admin_location_requests():
@@ -1711,6 +1723,7 @@ def review_location_request(request_id):
                 district=loc_request.district,
                 land_use=loc_request.land_use,
                 info=f'Requested by {loc_request.user.ngo_name}. Reason: {loc_request.reason}',
+                image=loc_request.photo,
                 admin_id=current_user.id
             )
             db.session.add(river)
@@ -1777,9 +1790,11 @@ def chatbot_message():
         - Admin Users: Manage rivers, approve/reject reports, manage NGO access, view advanced Hotspot Analysis.
         
         Formatting Rules:
-        - Provide answers as purely formatted HTML (using <br>, <strong>, <em>, <ul>, <li>) so it renders correctly in the chat widget. Do NOT use markdown.
+        - Provide answers in standard Markdown formatting (using **bold**, *italics*, and lists). 
+        - Do NOT use HTML tags.
         - Keep answers concise (1-3 short paragraphs).
-        - Directly directly address the user's question, taking their assigned Role into account.
+        - Directly address the user's question, taking their assigned Role into account.
+        - If a user asks about cleanup safety protocols, equipment, or handling industrial waste, proactively provide a helpful summary of standard industrial safety checklists (e.g., proper PPE like hazmat suits/gloves, securing the perimeter, identifying hazards) before reminding them to also consult the DOE or relevant authorities.
         
         User Message: {user_message}
         '''
